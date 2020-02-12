@@ -1,0 +1,53 @@
+{% extends 'base-view.html' %}
+{% block body %}
+  <div class="col col-lg-6">
+    <div class="card card-body">
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="date">Data</label>
+          <input type="date" id="date" name="date">
+{#        </div>#}
+{#        <div class="form-group">#}
+          <label for="amount">Kwota</label>
+          <input type="number" step="0.01" id="amount" name="amount">
+        </div>
+        <div class="form-group col-md-4">
+          <label for="category">Kategoria</label>
+          <select id="category" name="category" class="form-control">
+            {% for category in categories %}
+              <option value="{{ category.id }}">{{ category.name }}</option>
+            {% empty %}
+              <option>Brak zdefiniowanych kategorii</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="comment">Komentarz</label>
+          <textarea class="form-control" cols="40" rows="1" id="comment" name="comment"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Dodaj</button>
+      </form>
+    </div>
+    <table class="table table-hover">
+      <thead class="thead-dark">
+      <tr>
+        <th>Data</th>
+        <th>Kategoria</th>
+        <th>Kwota</th>
+        <th width="40%">Opis</th>
+      </tr>
+      </thead>
+      <tbody>
+        {% for expense in expenses %}
+          <tr>
+            <td>{{ expense.date }}</td>
+            <td>{{ expense.category.name }}</td>
+            <td>{{ expense.amount }}</td>
+            <td>{{ expense.comment }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base-view.html' %}
+{% block title %}
+    Przychód
+{% endblock %}
+{% block body %}
+  <div class="col col-lg-6">
+    <div class="card card-body">
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="date">Data</label>
+          <input type="date" id="date" name="date">
+        </div>
+        <div class="form-group">
+          <label for="amount">Kwota</label>
+          <input type="number" step="0.01" id="amount" name="amount">
+        </div>
+        <div class="form-group">
+          <label for="comment">Komentarz</label>
+          <textarea class="form-control" cols="40" rows="1" id="comment" name="comment"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Dodaj</button>
+      </form>
+    </div>
+    <table class="table table-hover">
+      <thead class="thead-dark">
+      <tr>
+        <th width="30%">Data</th>
+        <th width="30%">Kwota</th>
+        <th width="40%">Opis</th>
+      </tr>
+      </thead>
+      <tbody>
+        {% for income in incomes %}
+          <tr>
+            <td>{{ income.date }}</td>
+            <td>{{ income.amount }}</td>
+            <td>{{ income.comment }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

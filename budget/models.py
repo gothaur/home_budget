@@ -14,7 +14,6 @@ class Income(models.Model):
     date = models.DateField()
     amount = models.DecimalField(max_digits=8, decimal_places=2)
     comment = models.CharField(max_length=255)
-    # user_id = models.ForeignKey(User)
 
 
 class Expenses(models.Model):

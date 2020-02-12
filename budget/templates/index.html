@@ -1,13 +1,19 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-</head>
-<body>
-Robimy budzety
-</body>
-</html>
+{% extends 'base-view.html' %}
+{% block body %}
+  <table class="table table-hover">
+    <thead class="thead-dark">
+    <tr>
+      <th width="33%">Przybyło</th>
+      <th width="33%">Ubyło</th>
+      <th width="34%">Zostało</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>{{ total_income }}</td>
+      <td>{{ total_expenses }}</td>
+      <td>{{ savings }}</td>
+    </tr>
+    </tbody>
+  </table>
+{% endblock %}

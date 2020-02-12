@@ -20,4 +20,7 @@ from budget import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.Index.as_view(), name='index'),
+    path('income/', views.IncomeView.as_view(), name='income'),
+    path('expenses/', views.ExpensesView.as_view(), name='expenses'),
+    path('add-category/', views.AddCategory.as_view(), name='add-category'),
 ]
