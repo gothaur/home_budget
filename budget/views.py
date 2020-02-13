@@ -32,10 +32,22 @@ class ExpensesView(View):
 
         categories = Category.objects.order_by('name')
         expenses = Expenses.objects.order_by('date')
+        partial_expenses = []
+
+        for category in categories:
+            category_sum = 0
+            for expense in expenses:
+                if expense.category == category:
+                    category_sum += expense.amount
+            partial_expenses.append(category_sum)
+
+        data = zip(partial_expenses, categories)
 
         context = {
             'categories': categories,
             'expenses': expenses,
+            'partial_expenses': partial_expenses,
+            "data": data,
         }
         return render(request, 'expenses.html', context)
 
