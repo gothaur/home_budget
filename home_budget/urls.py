@@ -14,7 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import (
+    path,
+    include,
+)
 from budget import views
 
 urlpatterns = [
@@ -23,6 +26,5 @@ urlpatterns = [
     path('income/', views.IncomeView.as_view(), name='income'),
     path('expenses/', views.ExpensesView.as_view(), name='expenses'),
     path('add-category/', views.AddCategory.as_view(), name='add-category'),
-    path('api/expenses/', views.ExpensesList.as_view(), name='api-expenses'),
-    path('api/income/', views.IncomeList.as_view(), name='api-income'),
+    path('api/', include('api.urls')),
 ]
