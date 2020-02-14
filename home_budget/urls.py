@@ -23,4 +23,6 @@ urlpatterns = [
     path('income/', views.IncomeView.as_view(), name='income'),
     path('expenses/', views.ExpensesView.as_view(), name='expenses'),
     path('add-category/', views.AddCategory.as_view(), name='add-category'),
+    path('api/expenses/', views.ExpensesList.as_view(), name='api-expenses'),
+    path('api/income/', views.IncomeList.as_view(), name='api-income'),
 ]

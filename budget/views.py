@@ -2,11 +2,18 @@ from django.shortcuts import (
     render,
     redirect,
 )
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 from django.views import View
 from budget.models import (
     Category,
     Expenses,
     Income,
+)
+from budget.serializers import (
+    ExpensesSerializer,
+    IncomeSerializer,
 )
 
 
@@ -92,3 +99,63 @@ class AddCategory(View):
         name = request.POST.get('name')
         Category.objects.create(name=name)
         return redirect('index')
+
+
+class ExpensesList(APIView):
+
+    def get(self, request, format=None):
+        expenses = Expenses.objects.all()
+        serializer = ExpensesSerializer(expenses, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = ExpensesSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class IncomeList(APIView):
+
+    def get(self, request, format=None):
+        income = Income.objects.all()
+        serializer = IncomeSerializer(income, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = IncomeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class BookView(APIView):
+#
+#     def get_object(self, pk):
+#         try:
+#             return Book.objects.get(pk=pk)
+#         except Book.DoesNotExist:
+#             raise Http404
+#
+#     def get(self, request, id, format=None):
+#         book = self.get_object(id)
+#         serializer = BookSerializer(book, context={"request": request})
+#         return Response(serializer.data)
+#
+#     def delete(self, request, id, format=None):
+#         book = self.get_object(id)
+#         book.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+#
+#     def put(self, request, id, format=None):
+#         book = self.get_object(id)
+#         serializer = BookSerializer(book, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#
+#     def post(self, request, id, format=None):
+#         pass
