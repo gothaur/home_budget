@@ -3,8 +3,8 @@
     Podsumowanie
 {% endblock %}
 {% block body %}
-  <table class="table table-hover">
-    <thead class="thead-dark">
+  <!-- <table class="table table-hover">
+    <thead class="table thead-dark">
     <tr>
       <th width="33%">Przybyło</th>
       <th width="33%">Ubyło</th>
@@ -18,5 +18,34 @@
       <td>{{ savings }}</td>
     </tr>
     </tbody>
-  </table>
-{% endblock %}
+  </table> -->
+  {% for income, expenses, savings, month in total_costs %}
+    <label class="month">{{ month }} ({{ savings }})</label><br>
+    <table class="table table-hover">
+      <thead class="table thead-dark">
+      <tr>
+        <th width="33%">Przybyło</th>
+        <th width="33%">Ubyło</th>
+        <th width="34%">Zostało</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>{{ income }}</td>
+        <td>{{ expenses }}</td>
+        <td>{{ savings }}</td>
+      </tr>
+      </tbody>
+    </table>
+  {% endfor %}
+{% endblock %}{% block javascript %}
+<script>
+    $(function () {
+        let detail = $('.month');
+        detail.next().next().hide();
+        detail.click(function (event) {
+            $(event.currentTarget).next().next().toggle();
+        })
+    });
+</script>
+{% endblock javascript %}
