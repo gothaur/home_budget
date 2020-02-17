@@ -1,0 +1,10 @@
+{% extends "__base_view__.html" %}
+{% block title %}Logowanie{% endblock title %}
+{% block body %}
+  {{ user }}
+  <form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit">
+  </form>
+{% endblock %}

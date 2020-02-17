@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import (
     render,
     redirect,
@@ -19,12 +20,14 @@ class Index(View):
         annual_income = []
         annual_expenses = []
         annual_savings = []
-        months =[]
+        months = []
 
         for month in range(1, 13):
             months.append(datetime.datetime(current_year, month, 1).strftime('%B'))
-            total_income = sum([income.amount for income in Income.objects.filter(date__month=month)])
-            total_expenses = sum([expense.amount for expense in Expenses.objects.filter(date__month=month)])
+            total_income = sum([income.amount for income in Income.objects.filter(user=request.user)
+                               .filter(date__month=month)])
+            total_expenses = sum([expense.amount for expense in Expenses.objects.
+                                 filter(user=request.user).filter(date__month=month)])
             savings = total_income - total_expenses
             annual_income.append(total_income)
             annual_expenses.append(total_expenses)
@@ -38,12 +41,12 @@ class Index(View):
         return render(request, 'index.html', context)
 
 
-class ExpensesView(View):
+class ExpensesView(LoginRequiredMixin, View):
 
     def get(self, request):
 
         categories = Category.objects.order_by('name')
-        expenses = Expenses.objects.order_by('date')
+        expenses = Expenses.objects.filter(user=request.user).order_by('date')
         partial_expenses = []
 
         for category in categories:
@@ -69,7 +72,8 @@ class ExpensesView(View):
         amount = request.POST.get('amount')
         comment = request.POST.get('comment')
 
-        Expenses.objects.create(date=date, category=Category.objects.get(pk=category), amount=amount, comment=comment)
+        Expenses.objects.create(date=date, category=Category.objects.get(pk=category),
+                                amount=amount, comment=comment, user=request.user)
 
         return redirect('expenses')
 
@@ -78,7 +82,7 @@ class IncomeView(View):
 
     def get(self, request):
 
-        incomes = Income.objects.order_by('date')
+        incomes = Income.objects.filter(user=request.user).order_by('date')
 
         context = {
             'incomes': incomes,
@@ -90,7 +94,7 @@ class IncomeView(View):
         amount = request.POST.get('amount')
         comment = request.POST.get('comment')
 
-        Income.objects.create(date=date, amount=amount, comment=comment)
+        Income.objects.create(date=date, amount=amount, comment=comment, user=request.user)
 
         return redirect('income')
 

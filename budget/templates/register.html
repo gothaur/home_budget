@@ -1,0 +1,11 @@
+{% extends '__base_view__.html' %}
+{% block title %}
+    Logowanie
+{% endblock %}
+{% block body %}
+    <form method="post" class="form-group">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit" class="btn btn-success">Zarejestruj</button>
+  </form>
+{% endblock %}

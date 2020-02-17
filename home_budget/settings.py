@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'budget',
     'rest_framework',
     'api',
+    'users',
 ]
 
 MIDDLEWARE = [
