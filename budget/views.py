@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import (
     render,
     redirect,
@@ -12,7 +13,7 @@ from budget.models import (
 import datetime
 
 
-class Index(View):
+class Index(LoginRequiredMixin, View):
 
     def get(self, request):
         
@@ -78,7 +79,7 @@ class ExpensesView(LoginRequiredMixin, View):
         return redirect('expenses')
 
 
-class IncomeView(View):
+class IncomeView(LoginRequiredMixin, View):
 
     def get(self, request):
 
@@ -99,7 +100,7 @@ class IncomeView(View):
         return redirect('income')
 
 
-class AddCategory(View):
+class AddCategory(LoginRequiredMixin, View):
 
     def get(self, request):
         return render(request, 'add-category.html')
