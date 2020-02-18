@@ -3,18 +3,18 @@
   Wydatki
 {% endblock %}
 {% block body %}
-  <div class="col col-lg-10">
+  <div class="col col-sm-10">
     <div class="card card-body">
       <form method="post" class="form-inline">
         {% csrf_token %}
-        <div class="form-group">
-          <label for="date">Data</label>
-          <input type="date" id="date" name="date">
-          <label for="amount">Kwota</label>
-          <input type="number" step="0.01" id="amount" name="amount">
+        <!-- <div class="form-group"> -->
+          <label for="date" class="mr-sm-2">Data</label>
+          <input type="date" id="date" name="date" class="form-control mb-2 mr-sm-2">
+          <label for="amount" class="mr-sm-2">Kwota</label>
+          <input type="number" step="0.01" id="amount" name="amount" class="form-control mb-2 mr-sm-2">
           {#        </div>#}
           {#        <div class="form-group col-md-3">#}
-          <label for="category">Kategoria</label>
+          <label for="category" class="mr-sm-2">Kategoria</label>
           <select id="category" name="category" class="form-control">
             {% for category in categories %}
               <option value="{{ category.id }}">{{ category.name }}</option>
@@ -24,11 +24,11 @@
           </select>
           {#        </div>#}
           <div class="form-group">
-            <label for="comment">Komentarz</label>
-            <textarea class="form-control" cols="40" rows="1" id="comment" name="comment"></textarea>
+            <label for="comment" class="mr-sm-2">Komentarz</label>
+            <textarea class="form-control mb-2 mr-sm-2" cols="40" rows="1" id="comment" name="comment"></textarea>
           </div>
-          <button type="submit" class="btn btn-primary">Dodaj</button>
-        </div>
+          <button type="submit" class="btn btn-primary mb-2">Dodaj</button>
+        <!-- </div> -->
       </form>
     </div>
     <div class="accordion" id="accordionExample">
@@ -36,7 +36,7 @@
         <div class="card">
           <div class="card-header" id="heading{{ category.name }}">
             <h2 class="mb-0">
-              <button class="btn btn-link container" type="button" data-toggle="collapse"
+              <button class="btn btn-light container" type="button" data-toggle="collapse"
                       data-target="#collapse{{ category.name }}" aria-expanded="false"
                       aria-controls="collapse{{ category.name }}">
                 <div class="row">
