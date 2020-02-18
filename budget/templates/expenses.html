@@ -1,4 +1,4 @@
-{% extends '__base_view__.html' %}
+<!-- {% extends '__base_view__.html' %}
 {% block title %}
   Wydatki
 {% endblock %}
@@ -107,4 +107,14 @@
 
 
   </div>
+{% endblock %} -->
+
+{% extends '__base_view__.html' %}
+{% block title %}
+  Wydatki
+{% endblock %}
+{% block body %}
+  {% for expense in expenses %}
+    {{ expense }}
+  {% endfor %}
 {% endblock %}
