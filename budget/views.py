@@ -14,15 +14,15 @@ import datetime
 
 
 # class Index(LoginRequiredMixin, View):
-
-#     def get(self, request):
-        
+#
+#     def get(self, request, month=datetime.date.today().month):
+#
 #         current_year = datetime.date.today().year
 #         annual_income = []
 #         annual_expenses = []
 #         annual_savings = []
 #         months = []
-
+#
 #         for month in range(1, 13):
 #             months.append(datetime.datetime(current_year, month, 1).strftime('%B'))
 #             total_income = sum([income.amount for income in Income.objects.filter(user=request.user)
@@ -33,9 +33,9 @@ import datetime
 #             annual_income.append(total_income)
 #             annual_expenses.append(total_expenses)
 #             annual_savings.append(savings)
-
+#
 #         total_costs = zip(annual_income, annual_expenses, annual_savings, months)
-
+#
 #         context = {
 #             'total_costs': total_costs,
 #         }
@@ -45,11 +45,16 @@ import datetime
 class Index(LoginRequiredMixin, View):
 
     def get(self, request):
-        
-        expenses = Expenses.objects.filter(user=request.user).filter(date=datetime.date.month).order_by('date')
+
+        month = request.GET.get('month', datetime.date.today().month)
+        total_income = sum([income.amount for income in Income.objects.filter(user=request.user).filter(date__month=month)])
+        total_expenses = sum([expense.amount for expense in Expenses.objects.filter(user=request.user).filter(date__month=month)])
+        total_savings = total_income - total_expenses
 
         context = {
-            'expenses': expenses,
+            'total_income': total_income,
+            'total_expenses': total_expenses,
+            'total_savings': total_savings,
         }
         return render(request, 'index.html', context)
 
@@ -58,8 +63,9 @@ class ExpensesView(LoginRequiredMixin, View):
 
     def get(self, request):
 
+        month = request.GET.get('month', datetime.date.today().month)
         categories = Category.objects.order_by('name')
-        expenses = Expenses.objects.filter(user=request.user).order_by('date')
+        expenses = Expenses.objects.filter(user=request.user).filter(date__month=month).order_by('-date')
         partial_expenses = []
 
         for category in categories:
@@ -95,7 +101,9 @@ class IncomeView(LoginRequiredMixin, View):
 
     def get(self, request):
 
-        incomes = Income.objects.filter(user=request.user).order_by('date')
+        month = request.GET.get('month', datetime.date.today().month)
+
+        incomes = Income.objects.filter(user=request.user).filter(date__month=month).order_by('date')
 
         context = {
             'incomes': incomes,

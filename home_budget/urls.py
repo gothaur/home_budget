@@ -24,7 +24,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.Index.as_view(), name='index'),
     path('income/', views.IncomeView.as_view(), name='income'),
+    # path('income/?month=<int:month>/', views.IncomeView.as_view(), name='month-income'),
     path('expenses/', views.ExpensesView.as_view(), name='expenses'),
+    # path('expenses/<int:month>/', views.ExpensesView.as_view(), name='month-expenses'),
     path('add-category/', views.AddCategory.as_view(), name='add-category'),
     path('api/', include('api.urls')),
     path('users/', include('users.urls'))
