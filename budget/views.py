@@ -35,8 +35,12 @@ class ExpensesView(LoginRequiredMixin, View):
     def get(self, request):
 
         month = request.GET.get('month', datetime.date.today().month)
+        year = request.GET.get('year', datetime.date.today().year)
+
+        print(request.GET.get('selected_category'))
+
         categories = Category.objects.order_by('name')
-        expenses = Expenses.objects.filter(user=request.user).filter(date__month=month).order_by('-date')
+        expenses = Expenses.objects.filter(user=request.user).filter(date__year=year).filter(date__month=month).order_by('-date')
         partial_expenses = []
 
         for category in categories:
@@ -73,8 +77,9 @@ class IncomeView(LoginRequiredMixin, View):
     def get(self, request):
 
         month = request.GET.get('month', datetime.date.today().month)
+        year = request.GET.get('year', datetime.date.today().year)
 
-        incomes = Income.objects.filter(user=request.user).filter(date__month=month).order_by('date')
+        incomes = Income.objects.filter(user=request.user).filter(date__year=year).filter(date__month=month).order_by('date')
 
         context = {
             'incomes': incomes,

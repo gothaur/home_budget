@@ -32,10 +32,21 @@
       <table class="table table-borderless table-hover">
         <thead class="thead-dark">
         <tr>
-          <th style="width: 11%">Data</th>
+          <th style="width: 13%">Data</th>
           <th style="width: 10%">Kwota</th>
-          <th style="width: 10%">Kategoria</th>
-          <th style="width: 69%">Opis</th>
+          <th style="width: 10%">
+            <form>
+              <select id="selected_category" name="selected_category" class="form-control-sm">
+                <option value="" selected>Wszystko</option>
+                {% for category in categories %}
+                  <option value="{{ category.id }}">{{ category.name }}</option>
+                {% empty %}
+                  <option>Brak zdefiniowanych kategorii</option>
+                {% endfor %}
+              </select>
+            </form>
+          </th>
+          <th style="width: 67%">Opis</th>
         </tr>
         </thead>
         <tbody>
@@ -51,5 +62,13 @@
       </table>
     </div>
   </div>
+
+  <script>
+    console.log($('#selected_category'));
+    let category = document.getElementById('selected_category');
+    category.addEventListener('change', function(event){
+      let selected_category = JSON.stringify({'selected_category': event.currentTarget.value});
+    });
+  </script>
 
 {% endblock %}
