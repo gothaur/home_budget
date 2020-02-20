@@ -5,21 +5,26 @@ from django.shortcuts import (
     redirect,
 )
 from django.views import View
+from budget.functions import (
+    dataFilter,
+)
 from budget.models import (
     Category,
     Expenses,
     Income,
 )
 import datetime
+import calendar
 
 
 class Index(LoginRequiredMixin, View):
 
     def get(self, request):
-
-        month = request.GET.get('month', datetime.date.today().month)
-        total_income = sum([income.amount for income in Income.objects.filter(user=request.user).filter(date__month=month)])
-        total_expenses = sum([expense.amount for expense in Expenses.objects.filter(user=request.user).filter(date__month=month)])
+        
+        date_from = request.GET.get("date_from", "")
+        date_to = request.GET.get("date_to", "")
+        total_income = sum([income.amount for income in dataFilter(request, Income, date_from, date_to)])
+        total_expenses = sum([expense.amount for expense in dataFilter(request, Expenses, date_from, date_to)])
         total_savings = total_income - total_expenses
 
         context = {
@@ -34,31 +39,16 @@ class ExpensesView(LoginRequiredMixin, View):
 
     def get(self, request):
 
-        month = request.GET.get('month', datetime.date.today().month)
-        year = request.GET.get('year', datetime.date.today().year)
-        category = request.GET.get('category', 1)
-
-        print(category)
+        date_from = request.GET.get("date_from", "")
+        date_to = request.GET.get("date_to", "")
+        selected_category = request.GET.get("selected_category", "-1")
+        expenses = dataFilter(request, Expenses, date_from, date_to, selected_category)
 
         categories = Category.objects.order_by('name')
-        expenses = Expenses.objects.filter(user=request.user).filter(date__year=year).filter(date__month=month).\
-            filter(category=Category.objects.get(pk=category)).order_by('-date')
-        partial_expenses = []
-
-        for category in categories:
-            category_sum = 0
-            for expense in expenses:
-                if expense.category == category:
-                    category_sum += expense.amount
-            partial_expenses.append(category_sum)
-
-        data = zip(partial_expenses, categories)
 
         context = {
             'categories': categories,
             'expenses': expenses,
-            'partial_expenses': partial_expenses,
-            "data": data,
         }
         return render(request, 'expenses.html', context)
 
@@ -78,11 +68,14 @@ class IncomeView(LoginRequiredMixin, View):
 
     def get(self, request):
 
-        month = request.GET.get('month', datetime.date.today().month)
-        year = request.GET.get('year', datetime.date.today().year)
+        date_from = request.GET.get("date_from", "")
+        date_to = request.GET.get("date_to", "")
 
-        incomes = Income.objects.filter(user=request.user).filter(date__year=year).filter(date__month=month).order_by('date')
+        # month = request.GET.get('month', datetime.date.today().month)
+        # year = request.GET.get('year', datetime.date.today().year)
 
+        # incomes = Income.objects.filter(user=request.user).filter(date__year=year).filter(date__month=month).order_by('date')
+        incomes = dataFilter(request, Income, date_from, date_to)
         context = {
             'incomes': incomes,
         }
