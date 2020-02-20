@@ -51,13 +51,17 @@ class ExpensesView(LoginRequiredMixin, View):
             month=month,
             day=calendar.monthrange(year, month)[1])
 
-        print(f"kategoria: {selected_category}")
-
-        categories = Category.objects.order_by('name')
-        expenses = Expenses.objects.filter(user=request.user)\
+        if selected_category == -1:
+            expenses = Expenses.objects.filter(user=request.user)\
+            .filter(date__gte=date_from)\
+            .filter(date__lte=date_to).order_by('-date')
+        else:
+            expenses = Expenses.objects.filter(user=request.user)\
             .filter(date__gte=date_from)\
             .filter(date__lte=date_to)\
             .filter(category=selected_category).order_by('-date')
+
+        categories = Category.objects.order_by('name')        
         partial_expenses = []
 
         for category in categories:
