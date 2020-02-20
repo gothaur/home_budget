@@ -37,16 +37,16 @@ class ExpensesView(LoginRequiredMixin, View):
         
         year = datetime.date.today().year
         month = datetime.date.today().month
-        date_from = request.GET.get("date_from")
-        date_to = request.GET.get("date_to")
+        date_from = request.GET.get("date_from", "")
+        date_to = request.GET.get("date_to", "")
         selected_category = request.GET.get("selected_category", "-1")
 
-        if date_from == "" or date_from is None:
+        if date_from == "":
             date_from = datetime.date(year=year,
             month=month,
             day=1)
         
-        if date_to == "" or date_to is None:
+        if date_to == "":
             date_to = datetime.date(year=year,
             month=month,
             day=calendar.monthrange(year, month)[1])
@@ -61,23 +61,11 @@ class ExpensesView(LoginRequiredMixin, View):
             .filter(date__lte=date_to)\
             .filter(category=selected_category).order_by('-date')
 
-        categories = Category.objects.order_by('name')        
-        partial_expenses = []
-
-        for category in categories:
-            category_sum = 0
-            for expense in expenses:
-                if expense.category == category:
-                    category_sum += expense.amount
-            partial_expenses.append(category_sum)
-
-        data = zip(partial_expenses, categories)
+        categories = Category.objects.order_by('name')
 
         context = {
             'categories': categories,
             'expenses': expenses,
-            'partial_expenses': partial_expenses,
-            "data": data,
         }
         return render(request, 'expenses.html', context)
 
