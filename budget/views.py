@@ -5,6 +5,9 @@ from django.shortcuts import (
     redirect,
 )
 from django.views import View
+from budget.functions import (
+    dataFilter,
+)
 from budget.models import (
     Category,
     Expenses,
@@ -35,31 +38,32 @@ class ExpensesView(LoginRequiredMixin, View):
 
     def get(self, request):
         
-        year = datetime.date.today().year
-        month = datetime.date.today().month
+        # year = datetime.date.today().year
+        # month = datetime.date.today().month
         date_from = request.GET.get("date_from", "")
         date_to = request.GET.get("date_to", "")
         selected_category = request.GET.get("selected_category", "-1")
 
-        if date_from == "":
-            date_from = datetime.date(year=year,
-            month=month,
-            day=1)
+        # if date_from == "":
+        #     date_from = datetime.date(year=year,
+        #     month=month,
+        #     day=1)
         
-        if date_to == "":
-            date_to = datetime.date(year=year,
-            month=month,
-            day=calendar.monthrange(year, month)[1])
+        # if date_to == "":
+        #     date_to = datetime.date(year=year,
+        #     month=month,
+        #     day=calendar.monthrange(year, month)[1])
 
-        if selected_category == "-1":
-            expenses = Expenses.objects.filter(user=request.user)\
-            .filter(date__gte=date_from)\
-            .filter(date__lte=date_to).order_by('-date')
-        else:
-            expenses = Expenses.objects.filter(user=request.user)\
-            .filter(date__gte=date_from)\
-            .filter(date__lte=date_to)\
-            .filter(category=selected_category).order_by('-date')
+        # if selected_category == "-1":
+        #     expenses = Expenses.objects.filter(user=request.user)\
+        #     .filter(date__gte=date_from)\
+        #     .filter(date__lte=date_to).order_by('-date')
+        # else:
+        #     expenses = Expenses.objects.filter(user=request.user)\
+        #     .filter(date__gte=date_from)\
+        #     .filter(date__lte=date_to)\
+        #     .filter(category=selected_category).order_by('-date')
+        expenses = dataFilter(request, Expenses, date_from, date_to, selected_category)
 
         categories = Category.objects.order_by('name')
 
@@ -85,11 +89,14 @@ class IncomeView(LoginRequiredMixin, View):
 
     def get(self, request):
 
-        month = request.GET.get('month', datetime.date.today().month)
-        year = request.GET.get('year', datetime.date.today().year)
+        date_from = request.GET.get("date_from", "")
+        date_to = request.GET.get("date_to", "")
 
-        incomes = Income.objects.filter(user=request.user).filter(date__year=year).filter(date__month=month).order_by('date')
+        # month = request.GET.get('month', datetime.date.today().month)
+        # year = request.GET.get('year', datetime.date.today().year)
 
+        # incomes = Income.objects.filter(user=request.user).filter(date__year=year).filter(date__month=month).order_by('date')
+        incomes = dataFilter(request, Income, date_from, date_to)
         context = {
             'incomes': incomes,
         }
