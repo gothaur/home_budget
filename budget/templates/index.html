@@ -1,39 +1,7 @@
 {% extends '__base_view__.html' %}
 {% block title %}
-  Podsumowanie
+  Strona domowa
 {% endblock %}
 {% block body %}
-  <div class="card">
-    <div class="card-body">
-      <form class="form-inline">
-        <label for="date" class="mr-sm-2">Od</label>
-        <input type="date" id="date" name="date_from" class="form-control mb-2 mr-sm-2">
-        <label for="date" class="mr-sm-2">Do</label>
-        <input type="date" id="date" name="date_to" class="form-control mb-2 mr-sm-2">
-        <label for="category" class="mr-sm-2">Kategoria</label>
-        <button type="submit" class="btn btn-primary mb-2 mr-sm-2">Filtruj</button>
-      </form>
-      <table class="table table-borderless table-hover">
-        <thead class="thead-dark">
-        <tr>
-          <th style="width: 33%">Przychód</th>
-          <th style="width: 33%">Wydatki</th>
-          <th style="width: 33%">Saldo</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>{{ total_income }}</td>
-          <td>{{ total_expenses }}</td>
-          {% if total_savings < 0 %}
-            <td style="color: red">{{ total_savings }}</td>
-          {% else %}
-            <td style="color: green">{{ total_savings }}</td>
-          {% endif %}
-
-        </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  To jest strona domowa. Tu będzie kiedyś opis apki
 {% endblock %}

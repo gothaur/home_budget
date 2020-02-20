@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import (
     render,
     redirect,
@@ -13,26 +12,12 @@ from budget.models import (
     Expenses,
     Income,
 )
-import datetime
-import calendar
 
 
-class Index(LoginRequiredMixin, View):
+class Index(View):
 
     def get(self, request):
-        
-        date_from = request.GET.get("date_from", "")
-        date_to = request.GET.get("date_to", "")
-        total_income = sum([income.amount for income in dataFilter(request, Income, date_from, date_to)])
-        total_expenses = sum([expense.amount for expense in dataFilter(request, Expenses, date_from, date_to)])
-        total_savings = total_income - total_expenses
-
-        context = {
-            'total_income': total_income,
-            'total_expenses': total_expenses,
-            'total_savings': total_savings,
-        }
-        return render(request, 'index.html', context)
+        return render(request, 'index.html')
 
 
 class ExpensesView(LoginRequiredMixin, View):
@@ -70,11 +55,6 @@ class IncomeView(LoginRequiredMixin, View):
 
         date_from = request.GET.get("date_from", "")
         date_to = request.GET.get("date_to", "")
-
-        # month = request.GET.get('month', datetime.date.today().month)
-        # year = request.GET.get('year', datetime.date.today().year)
-
-        # incomes = Income.objects.filter(user=request.user).filter(date__year=year).filter(date__month=month).order_by('date')
         incomes = dataFilter(request, Income, date_from, date_to)
         context = {
             'incomes': incomes,
@@ -100,3 +80,20 @@ class AddCategory(LoginRequiredMixin, View):
         name = request.POST.get('name')
         Category.objects.create(name=name)
         return redirect('index')
+
+
+class Summary(LoginRequiredMixin, View):
+
+    def get(self, request):
+        date_from = request.GET.get("date_from", "")
+        date_to = request.GET.get("date_to", "")
+        total_income = sum([income.amount for income in dataFilter(request, Income, date_from, date_to)])
+        total_expenses = sum([expense.amount for expense in dataFilter(request, Expenses, date_from, date_to)])
+        total_savings = total_income - total_expenses
+
+        context = {
+            'total_income': total_income,
+            'total_expenses': total_expenses,
+            'total_savings': total_savings,
+        }
+        return render(request, 'summary.html', context)

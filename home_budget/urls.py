@@ -23,12 +23,9 @@ from budget import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.Index.as_view(), name='index'),
+    path('summary/', views.Summary.as_view(), name='summary'),
     path('income/', views.IncomeView.as_view(), name='income'),
     path('expenses/', views.ExpensesView.as_view(), name='expenses'),
-    path('income/<int:year>/<int:month>/', views.IncomeView.as_view(), name='income'),
-    path('expenses/<int:year>/<int:month>/', views.ExpensesView.as_view(), name='expenses'),
-    path('income/<int:year>/', views.IncomeView.as_view(), name='income'),
-    path('expenses/<int:year>/', views.ExpensesView.as_view(), name='expenses'),
     path('add-category/', views.AddCategory.as_view(), name='add-category'),
     path('api/', include('api.urls')),
     path('users/', include('users.urls'))
