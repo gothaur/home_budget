@@ -36,11 +36,13 @@ class ExpensesView(LoginRequiredMixin, View):
 
         month = request.GET.get('month', datetime.date.today().month)
         year = request.GET.get('year', datetime.date.today().year)
+        category = request.GET.get('category', 1)
 
-        print(request.GET.get('selected_category'))
+        print(category)
 
         categories = Category.objects.order_by('name')
-        expenses = Expenses.objects.filter(user=request.user).filter(date__year=year).filter(date__month=month).order_by('-date')
+        expenses = Expenses.objects.filter(user=request.user).filter(date__year=year).filter(date__month=month).\
+            filter(category=Category.objects.get(pk=category)).order_by('-date')
         partial_expenses = []
 
         for category in categories:
