@@ -39,7 +39,7 @@ class ExpensesView(LoginRequiredMixin, View):
         month = datetime.date.today().month
         date_from = request.GET.get("date_from")
         date_to = request.GET.get("date_to")
-        selected_category = request.GET.get("selected_category", -1)
+        selected_category = request.GET.get("selected_category", "-1")
 
         if date_from == "" or date_from is None:
             date_from = datetime.date(year=year,
@@ -51,7 +51,7 @@ class ExpensesView(LoginRequiredMixin, View):
             month=month,
             day=calendar.monthrange(year, month)[1])
 
-        if selected_category == -1:
+        if selected_category == "-1":
             expenses = Expenses.objects.filter(user=request.user)\
             .filter(date__gte=date_from)\
             .filter(date__lte=date_to).order_by('-date')

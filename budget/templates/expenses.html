@@ -35,7 +35,8 @@
         <label for="date" class="mr-sm-2">Do</label>
         <input type="date" id="date" name="date_to" class="form-control mb-2 mr-sm-2">
         <label for="category" class="mr-sm-2">Kategoria</label>
-        <select id="category" name="selected_category" class="form-control mb-2 mr-sm-2">
+        <select id="category" name="selected_category" class="form-control mb-2 mr-sm-2">          
+          <option value=-1 selected>Wszystko</option>
           {% for category in categories %}
             <option value="{{ category.id }}">{{ category.name }}</option>
           {% empty %}
@@ -49,18 +50,7 @@
         <tr>
           <th style="width: 13%">Data</th>
           <th style="width: 10%">Kwota</th>
-          <th style="width: 10%">
-            <form>
-              <select id="selected_category" name="selected_category" class="form-control-sm">
-                <option value="" selected>Wszystko</option>
-                {% for category in categories %}
-                  <option value="{{ category.id }}">{{ category.name }}</option>
-                {% empty %}
-                  <option>Brak zdefiniowanych kategorii</option>
-                {% endfor %}
-              </select>
-            </form>
-          </th>
+          <th style="width: 10%">Kategoria</th>
           <th style="width: 67%">Opis</th>
         </tr>
         </thead>
