@@ -11,6 +11,7 @@ from budget.models import (
     Income,
 )
 import datetime
+import calendar
 
 
 class Index(LoginRequiredMixin, View):
@@ -33,14 +34,31 @@ class Index(LoginRequiredMixin, View):
 class ExpensesView(LoginRequiredMixin, View):
 
     def get(self, request):
+        
+        year = datetime.date.today().year
+        month = datetime.date.today().month
+        date_from = request.GET.get("date_from")
+        date_to = request.GET.get("date_to")
+        selected_category = request.GET.get("selectes_category", "")
 
-        month = request.GET.get('month', datetime.date.today().month)
-        year = request.GET.get('year', datetime.date.today().year)
+        if date_from == "" or date_from is None:
+            date_from = datetime.date(year=year,
+            month=month,
+            day=1)
+        
+        if date_to == "" or date_to is None:
+            date_to = datetime.date(year=year,
+            month=month,
+            day=calendar.monthrange(year, month)[1])
 
-        print(request.GET.get('selected_category'))
+        print(f"data_from: {date_from}")
+        print(f"data_to: {date_to}")
 
         categories = Category.objects.order_by('name')
-        expenses = Expenses.objects.filter(user=request.user).filter(date__year=year).filter(date__month=month).order_by('-date')
+        expenses = Expenses.objects.filter(user=request.user)\
+            .filter(date__gte=date_from)\
+            .filter(date__lte=date_to)\
+            .order_by('-date')
         partial_expenses = []
 
         for category in categories:
