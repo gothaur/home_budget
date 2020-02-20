@@ -27,4 +27,24 @@
       </table>
     </div>
   </div>
+  <div class="card">
+    <div class="card-body">
+      <table class="table table-borderless table-hover">
+        <thead class="thead-dark">
+        <tr>
+          <th style="width: 33%">Kategoria</th>
+          <th style="width: 33%">Styczeń</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for category, expenses in data %}
+          <tr>
+            <td>{{ category.name }}</td>
+            <td>{{ expenses }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 {% endblock %}
