@@ -4,7 +4,7 @@ from django.shortcuts import (
     redirect,
 )
 from django.views import View
-from budget.functions import (
+from home_budget.functions import (
     data_filter,
     get_month_names,
 )
@@ -15,10 +15,19 @@ from budget.models import (
 )
 
 
+# class Index(View):
+#
+#     def get(self, request):
+#         return render(request, 'index.html')
+
+
 class Index(View):
 
     def get(self, request):
-        return render(request, 'index.html')
+        if not request.user.is_authenticated:
+            return redirect('login')
+        else:
+            return redirect('expenses')
 
 
 class ExpensesView(LoginRequiredMixin, View):

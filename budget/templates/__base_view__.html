@@ -12,9 +12,9 @@
   <title>{% block title %} {% endblock %}</title>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark mb-3">
   <a class="navbar-brand" href="{% url 'index' %}">
-    <img src="https://img.icons8.com/material-outlined/24/000000/home--v2.png">
+    <img src="https://img.icons8.com/material-outlined/24/000000/home--v2.png" alt="Home">
   </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse"
           data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -33,20 +33,22 @@
       <li class="nav-item">
         <a class="nav-link" href="{% url 'expenses' %}">Wydatki</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'register' %}">Zarejestruj</a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Dropdown
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="{% url 'login' %}">Zaloguj</a>
-          <a class="dropdown-item" href="{% url 'edit' %}">Edytuj</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="{% url 'logout' %}">Wyloguj</a>
-        </div>
-      </li>
+      {% if not user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'register' %}">Zarejestruj</a>
+        </li>
+      {% else %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{ user.get_username }}
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="{% url 'settings' %}">Ustawienia</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'logout' %}">Wyloguj</a>
+          </div>
+        </li>
+      {% endif %}
     </ul>
     <form class="form-inline my-2 my-lg-0">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -78,7 +80,7 @@
                 <label for="comment" class="mr-sm-2">Komentarz</label>
                 <textarea class="form-control mb-2 mr-sm-2" cols="40" rows="1" id="comment" name="comment"></textarea>
               </div>
-              <button type="submit" class="btn btn-primary mb-2">Dodaj</button>
+              <button type="submit" class="btn btn-outline-secondary form-control mb-2">Dodaj</button>
             </form>
           {% endif %}
           {% if message == "income" %}
@@ -95,7 +97,7 @@
                 <textarea class="form-control mb-2 mr-sm-2" cols="40"
                           rows="1" id="comment" name="comment"></textarea>
               </div>
-              <button type="submit" class="btn btn-primary mb-2">Dodaj</button>
+              <button type="submit" class="btn btn-outline-secondary form-control mb-2">Dodaj</button>
             </form>
           {% endif %}
         </div>
@@ -123,7 +125,7 @@
                   <option>Brak zdefiniowanych kategorii</option>
                 {% endfor %}
               </select>
-              <button type="submit" class="btn btn-outline-info mb-2 mr-sm-2">Filtruj</button>
+              <button type="submit" class="btn btn btn-outline-secondary form-control mb-2 mr-sm-2">Filtruj</button>
             </form>
           {% else %}
             <form class="form-group">
@@ -132,7 +134,7 @@
               <label for="date" class="mr-sm-2">Do</label>
               <input type="date" id="date" name="date_to" class="form-control mb-2 mr-sm-2">
               <label for="category" class="mr-sm-2">Kategoria</label>
-              <button type="submit" class="btn btn-primary mb-2 mr-sm-2">Filtruj</button>
+              <button type="submit" class="btn btn-outline-secondary form-control mb-2 mr-sm-2">Filtruj</button>
             </form>
           {% endif %}
         </div>

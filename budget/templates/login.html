@@ -1,30 +1,25 @@
 {% extends "__base_view__.html" %}
 {% block title %}Logowanie{% endblock title %}
 {% block body %}
-  <div id="login">
-    <form class="form-horizontal" name="LoginForm" method="post">
-      {% csrf_token %}
-      {% if next %}
-        <input type="hidden" name="next" value="{{ next }}" />
-      {% endif %}
-      <div class="control-group">
-        <label class="control-label" for="username">Nazwa użytkownika</label>
-        <div class="controls">
-          <input type="text" id="username" name="username"  placeholder="Login">
+  <div class="card text-center mx-auto" style="width: 26rem; margin-top: 10%">
+    <div class="card-header text-center">
+      Zaloguj się do księgowości
+    </div>
+    <div class="card-body">
+      <form class="form-group" name="LoginForm" method="post">
+        {% csrf_token %}
+        {% if next %}
+          <input type="hidden" name="next" value="{{ next }}" />
+        {% endif %}
+        <div class="form-group">
+          <input class="form-control" type="text" id="username" name="username"  placeholder="Nazwa użytkownika">
         </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="password">Hasło</label>
-        <div class="controls">
-          <input type="password" name="password" id="password" placeholder="Hasło">
+        <div class="form-group">
+          <input class="form-control" type="password" name="password" id="password" placeholder="Hasło">
         </div>
-      </div>
-      <div class="control-group">
-        <div class="controls">
-          <button type="submit" class="btn btn-success">Zaloguj</button>
-        </div>
-      </div>
-    </form>
-    <p>Nie masz konta? Zarejstruj się <a href="{% url 'register' %}">tutaj</a></p>
+        <button type="submit" class="btn btn-primary form-control">Zaloguj się</button>
+      </form>
+      <p>Nie masz konta? Zarejstruj się <a href="{% url 'register' %}">tutaj</a></p>
+    </div>
   </div>
 {% endblock %}
