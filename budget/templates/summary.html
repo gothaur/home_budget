@@ -1,4 +1,5 @@
 {% extends '__base_view__.html' %}
+{% load custom_filters %}
 {% block title %}
   Podsumowanie
 {% endblock %}
@@ -29,18 +30,22 @@
   </div>
   <div class="card">
     <div class="card-body">
-      <table class="table table-borderless table-hover">
+      <table class="table table-borderless table-hover table-sm table-responsive">
         <thead class="thead-dark">
         <tr>
           <th style="width: 33%">Kategoria</th>
-          <th style="width: 33%">Styczeń</th>
+          {% for month in months %}
+            <th style="width: 33%">{{ month|date:"F" }}</th>
+          {% endfor %}
         </tr>
         </thead>
         <tbody>
-        {% for category, expenses in data %}
+        {% for res in result %}
           <tr>
-            <td>{{ category.name }}</td>
-            <td>{{ expenses }}</td>
+            <td>{{ categories|index:forloop.counter0 }}</td>
+            {% for counter in res|entry_num_array %}
+              <td>{{res|index:counter}}</td>
+            {% endfor %}
           </tr>
         {% endfor %}
         </tbody>

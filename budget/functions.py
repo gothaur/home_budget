@@ -2,7 +2,7 @@ import datetime
 import calendar
 
 
-def dataFilter(request, model, date_from, date_to, selected_category="-1"):
+def data_filter(request, model, date_from, date_to, selected_category="-1"):
     year = datetime.date.today().year
     month = datetime.date.today().month
 
@@ -25,3 +25,7 @@ def dataFilter(request, model, date_from, date_to, selected_category="-1"):
             .filter(date__gte=date_from) \
             .filter(date__lte=date_to) \
             .filter(category=selected_category).order_by('-date')
+
+
+def get_month_names():
+    return [datetime.date(2000, m, 1) for m in range(1, 13)]

@@ -1,6 +1,3 @@
-import calendar
-import datetime
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import (
     render,
@@ -8,7 +5,8 @@ from django.shortcuts import (
 )
 from django.views import View
 from budget.functions import (
-    dataFilter,
+    data_filter,
+    get_month_names,
 )
 from budget.models import (
     Category,
@@ -29,7 +27,7 @@ class ExpensesView(LoginRequiredMixin, View):
         date_from = request.GET.get("date_from", "")
         date_to = request.GET.get("date_to", "")
         selected_category = request.GET.get("selected_category", "-1")
-        expenses = dataFilter(request, Expenses, date_from, date_to, selected_category)
+        expenses = data_filter(request, Expenses, date_from, date_to, selected_category)
 
         categories = Category.objects.order_by('name')
 
@@ -56,7 +54,7 @@ class IncomeView(LoginRequiredMixin, View):
     def get(self, request):
         date_from = request.GET.get("date_from", "")
         date_to = request.GET.get("date_to", "")
-        incomes = dataFilter(request, Income, date_from, date_to)
+        incomes = data_filter(request, Income, date_from, date_to)
         context = {
             'incomes': incomes,
         }
@@ -88,54 +86,29 @@ class Summary(LoginRequiredMixin, View):
     def get(self, request):
         date_from = request.GET.get("date_from", "")
         date_to = request.GET.get("date_to", "")
-        total_income = sum([income.amount for income in dataFilter(request, Income, date_from, date_to)])
-        total_expenses = sum([expense.amount for expense in dataFilter(request, Expenses, date_from, date_to)])
+        total_income = sum([income.amount for income in data_filter(request, Income, date_from, date_to)])
+        total_expenses = sum([expense.amount for expense in data_filter(request, Expenses, date_from, date_to)])
         total_savings = total_income - total_expenses
-        categories = Category.objects.order_by('name')
 
-        months = []
-        monthly_expenses = []
-        annual_expenses = []
+        months = get_month_names()
+        categories = [category.name for category in Category.objects.order_by('name')]
 
-        for i in range(1, 13):
-            months.append(calendar.month_name[i])
+        result = []
 
-        # annual_income = []
-        #         annual_expenses = []
-        #         annual_savings = []
-        #         months = []
-        #
-        #         for month in range(1, 13):
-        #             months.append(datetime.datetime(current_year, month, 1).strftime('%B'))
-        #             total_income = sum([income.amount for income in Income.objects.filter(user=request.user)
-        #                                .filter(date__month=month)])
-        #             total_expenses = sum([expense.amount for expense in Expenses.objects.
-        #                                  filter(user=request.user).filter(date__month=month)])
-        #             savings = total_income - total_expenses
-        #             annual_income.append(total_income)
-        #             annual_expenses.append(total_expenses)
-        #             annual_savings.append(savings)
-        #
-        #         total_costs = zip(annual_income, annual_expenses, annual_savings, months)
-
-        for i in range(1, 13):
-            annual_expenses.append([])
-            for category in categories:
-                annual_expenses[i - 1].append(sum([expense.amount for expense in Expenses.objects.
-                                              filter(user=request.user).filter(category=category)
-                                              .filter(date__month=i)]))
-
-        for i in range(len(annual_expenses)):
-            annual_expenses[i] = sum(annual_expenses[i])
-
-        data = zip(categories, annual_expenses)
+        for i, category in enumerate(categories):
+            result.append([])
+            for month in range(1,13):
+                monthly_amount = 0
+                for expense in Expenses.objects.filter(user=request.user).filter(category__name=category).filter(date__month=month):
+                    monthly_amount += expense.amount
+                result[i].append(monthly_amount)
 
         context = {
             'total_income': total_income,
             'total_expenses': total_expenses,
             'total_savings': total_savings,
-            'categories': categories,
             'months': months,
-            'data': data,
+            'categories': categories,
+            'result': result
         }
         return render(request, 'summary.html', context)
