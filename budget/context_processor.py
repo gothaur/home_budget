@@ -1,4 +1,4 @@
-def left_sidebar(request):
+def sidebars(request):
     if request.path == '/expenses/':
         message = "expenses"
     elif request.path == '/income/':

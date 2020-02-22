@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import (
     render,
@@ -28,6 +29,16 @@ class Index(View):
             return redirect('login')
         else:
             return redirect('expenses')
+
+    def post(self, request):
+
+        user = authenticate(username=request.POST['username'], password=request.POST['password'])
+        if user is not None:
+            login(request, user)
+            request.session['username'] = user.username
+            return redirect('summary')
+
+        return redirect('login')
 
 
 class ExpensesView(LoginRequiredMixin, View):

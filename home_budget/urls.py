@@ -28,5 +28,5 @@ urlpatterns = [
     path('expenses/', views.ExpensesView.as_view(), name='expenses'),
     path('add-category/', views.AddCategory.as_view(), name='add-category'),
     path('api/', include('api.urls')),
-    path('users/', include('users.urls'))
+    path('users/', include('users.urls')),
 ]
