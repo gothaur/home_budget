@@ -1,39 +1,50 @@
 {% extends "__base_view__.html" %}
 {% block title %}Rejestracja{% endblock title %}
 {% block body %}
+
   {% if form.username.errors %}
-    <ol>
-      {% for err in form.username.errors %}
-        <li>
-          <strong>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <ol>
+        {% for err in form.username.errors %}
+          <li>
             {{ err|escape }}
-          </strong>
-        </li>
-      {% endfor %}
-    </ol>
+          </li>
+        {% endfor %}
+      </ol>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
   {% endif %}
   {% if form.password1.errors %}
-    <ol>
-      {% for err in form.password1.errors %}
-        <li>
-          <strong>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <ol>
+        {% for err in form.password1.errors %}
+          <li>
             {{ err|escape }}
-          </strong>
-        </li>
-      {% endfor %}
-    </ol>
+          </li>
+        {% endfor %}
+      </ol>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
   {% endif %}
   {% if form.password2.errors %}
-    <ol>
-      {% for err in form.password2.errors %}
-        <li>
-          <strong>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <ol>
+        {% for err in form.password2.errors %}
+          <li>
             {{ err|escape }}
-          </strong>
-        </li>
-      {% endfor %}
-    </ol>
+          </li>
+        {% endfor %}
+      </ol>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
   {% endif %}
+
   <div class="card text-center mx-auto" style="width: 26rem; margin-top: 5%">
     <div class="card-header text-center">
       Zarejestruj nowe konto

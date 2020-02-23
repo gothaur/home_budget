@@ -102,3 +102,9 @@ class SettingsView(View):
         if form_name == 'add_category':
             Category.objects.create(name=request.POST.get('category'))
             return redirect('settings')
+
+        if form_name == 'edit_user':
+            user = request.user
+            user.first_name = request.POST.get('first_name')
+            user.save()
+            return redirect('settings')
