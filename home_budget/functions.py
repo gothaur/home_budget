@@ -1,10 +1,15 @@
 import datetime
 import calendar
 
+from django.utils import timezone
 
-def data_filter(request, model, date_from, date_to, selected_category="-1"):
-    year = datetime.date.today().year
-    month = datetime.date.today().month
+
+def data_filter(request, model, date_from, date_to, selected_category="-1",
+                month=timezone.now().month, year=timezone.now().year):
+    # year = datetime.date.today().year
+    # month = datetime.date.today().month
+    # year = timezone.now().year
+    # month = timezone.now().month
 
     if date_from == "":
         date_from = datetime.date(year=year,

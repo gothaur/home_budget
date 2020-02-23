@@ -11,9 +11,8 @@ from django.shortcuts import (
     render,
     redirect,
 )
-from django.views import View
-from users.forms import (
-    UserForm,
+from django.views import (
+    View,
 )
 from budget.models import (
     Category,
@@ -38,44 +37,44 @@ class LoginView(View):
         return redirect('login')
 
 
-# class RegisterView(View):
-#
-#     def get(self, request):
-#         form = UserCreationForm()
-#         context = {
-#             'form': form,
-#         }
-#         return render(request, 'register.html', context)
-#
-#     def post(self, request):
-#         form = UserCreationForm(request.POST)
-#
-#         if form.is_valid():
-#             form.save()
-#             return redirect('login')
-#         else:
-#             context = {
-#                 'form': form,
-#             }
-#             return render(request, 'register.html', context)
-
-
 class RegisterView(View):
 
     def get(self, request):
-        return render(request, 'register.html')
+        form = UserCreationForm()
+        context = {
+            'form': form,
+        }
+        return render(request, 'register.html', context)
 
     def post(self, request):
-        username = request.POST.get('username')
-        pass1 = request.POST.get('password_1')
-        pass2 = request.POST.get('password_2')
+        form = UserCreationForm(request.POST)
 
-        if username is not None and len(username) > 6:
-            if pass1 == pass2 and pass1 is not None and len(pass1) > 6:
-                User.objects.create_user(username=username, password=pass1)
-                return redirect('login')
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+        else:
+            context = {
+                'form': form,
+            }
+            return render(request, 'register.html', context)
 
-        return render(request, 'register.html',)
+
+# class RegisterView(View):
+#
+#     def get(self, request):
+#         return render(request, 'register.html')
+#
+#     def post(self, request):
+#         username = request.POST.get('username')
+#         pass1 = request.POST.get('password_1')
+#         pass2 = request.POST.get('password_2')
+#
+#         if username is not None and len(username) > 6:
+#             if pass1 == pass2 and pass1 is not None and len(pass1) > 6:
+#                 User.objects.create_user(username=username, password=pass1)
+#                 return redirect('login')
+#
+#         return render(request, 'register.html',)
 
 
 class LogoutView(View):

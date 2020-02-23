@@ -4,6 +4,7 @@ from django.shortcuts import (
     render,
     redirect,
 )
+from django.utils import timezone
 from django.views import View
 from home_budget.functions import (
     data_filter,
@@ -117,9 +118,10 @@ class Summary(LoginRequiredMixin, View):
 
         for i, category in enumerate(categories):
             result.append([])
-            for month in range(1,13):
+            for month in range(1, 13):
                 monthly_amount = 0
-                for expense in Expenses.objects.filter(user=request.user).filter(category__name=category).filter(date__month=month):
+                for expense in Expenses.objects.filter(user=request.user).filter(category__name=category)\
+                        .filter(date__year=timezone.now().year).filter(date__month=month):
                     monthly_amount += expense.amount
                 result[i].append(monthly_amount)
 
@@ -132,3 +134,9 @@ class Summary(LoginRequiredMixin, View):
             'result': result
         }
         return render(request, 'summary.html', context)
+
+
+class DeleteExpense(View):
+
+    def post(self, request, expense_id):
+        pass

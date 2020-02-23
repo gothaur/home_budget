@@ -11,7 +11,8 @@
           <th style="width: 13%">Data</th>
           <th style="width: 10%">Kwota</th>
           <th style="width: 10%">Kategoria</th>
-          <th style="width: 67%">Opis</th>
+          <th style="width: 62%">Opis</th>
+          <th style="width: 5%">Usuń</th>
         </tr>
         </thead>
         <tbody>
@@ -21,6 +22,14 @@
             <td>{{ expense.amount }}</td>
             <td>{{ expense.category.name }}</td>
             <td>{{ expense.comment }}</td>
+            <td>
+              <form action="{% url 'delete-expense' expense.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link btn-sm">
+                  <img src="https://img.icons8.com/officexs/16/000000/delete-sign.png" alt="del">
+                </button>
+              </form>
+            </td>
           </tr>
         {% endfor %}
         </tbody>
