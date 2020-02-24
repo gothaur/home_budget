@@ -20,21 +20,34 @@ from budget.models import (
     Category,
 )
 
+from users.forms import (
+    LoginForm,
+)
+
 
 class LoginView(View):
 
     def get(self, request):
         logout(request)
-        return render(request, 'login.html')
+        ctx = {
+            'form': LoginForm()
+        }
+        return render(            
+            request,
+            'login.html',
+            ctx,            
+        )
 
     def post(self, request):
 
-        user = authenticate(username=request.POST['username'], password=request.POST['password'])
-        if user is not None:
-            # if user.is_active():
-            login(request, user)
-            request.session['username'] = user.username
-            return redirect(request.GET.get('next', '/'))
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            if user is not None:
+                # if user.is_active():
+                login(request, user)
+                request.session['username'] = user.username
+                return redirect(request.GET.get('next', '/'))
 
         return redirect('login')
 
@@ -61,7 +74,8 @@ class RegisterView(View):
             return render(
                 request,
                 'register.html',
-                context)
+                context,
+            )
 
 
 class LogoutView(View):
