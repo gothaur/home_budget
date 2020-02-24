@@ -1,4 +1,5 @@
 {% extends "__base_view__.html" %}
+{% comment %} 
 {% block title %}Logowanie{% endblock title %}
 {% block body %}
   <div class="card text-center mx-auto" style="width: 26rem; margin-top: 10%">
@@ -17,6 +18,24 @@
         <div class="form-group">
           <input class="form-control" type="password" name="password" id="password" placeholder="Hasło">
         </div>
+        <button type="submit" class="btn btn-primary form-control">Zaloguj się</button>
+      </form>
+      <p>Nie masz konta? Zarejstruj się <a href="{% url 'register' %}">tutaj</a></p>
+    </div>
+  </div>
+{% endblock %}  {% endcomment %}
+
+
+{% block title %}Logowanie{% endblock title %}
+{% block body %}
+  <div class="card text-center mx-auto" style="width: 26rem; margin-top: 10%">
+    <div class="card-header text-center">
+      Zaloguj się do księgowości
+    </div>
+    <div class="card-body">
+      <form class="form-group" name="LoginForm" method="post">
+        {% csrf_token %}
+        {{ form }}
         <button type="submit" class="btn btn-primary form-control">Zaloguj się</button>
       </form>
       <p>Nie masz konta? Zarejstruj się <a href="{% url 'register' %}">tutaj</a></p>
