@@ -11,6 +11,7 @@
           <th style="width: 13%">Data</th>
           <th style="width: 10%">Kwota</th>
           <th style="width: 77%">Opis</th>
+          <th style="width: 5%">Usuń</th>
         </tr>
         </thead>
         <tbody>
@@ -19,6 +20,15 @@
             <td>{{ income.date|date:"SHORT_DATE_FORMAT" }}</td>
             <td>{{ income.amount }}</td>
             <td>{{ income.comment }}</td>
+            <td>
+              <form action="{% url 'delete-income' income.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link btn-sm">
+                  {% load static %}
+                  <img src="{% static "budget/delete-sign.png" %}" alt="del">
+                </button>
+              </form>
+            </td>
           </tr>
         {% endfor %}
         </tbody>

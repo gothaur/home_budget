@@ -1,11 +1,19 @@
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+)
 from django.shortcuts import (
     render,
     redirect,
 )
+from django.urls import reverse_lazy
 from django.utils import timezone
-from django.views import View
+from django.views import (
+    View,
+)
+from django.views.generic import (
+    DeleteView,
+)
 from home_budget.functions import (
     data_filter,
     get_month_names,
@@ -15,12 +23,6 @@ from budget.models import (
     Expenses,
     Income,
 )
-
-
-# class Index(View):
-#
-#     def get(self, request):
-#         return render(request, 'index.html')
 
 
 class Index(View):
@@ -136,7 +138,22 @@ class Summary(LoginRequiredMixin, View):
         return render(request, 'summary.html', context)
 
 
-class DeleteExpense(View):
+class DeleteExpense(LoginRequiredMixin, View):
 
     def post(self, request, expense_id):
-        pass
+        Expenses.objects.get(pk=expense_id).delete()
+        return redirect('expenses')
+
+
+class DeleteExpenseView(LoginRequiredMixin, DeleteView):
+    http_method_names = ['post']
+    model = Expenses
+    pk_url_kwarg = 'expense_id'
+    success_url = reverse_lazy('expenses')
+
+
+class DeleteIncomeView(LoginRequiredMixin, DeleteView):
+    http_method_names = ['post']
+    model = Income
+    pk_url_kwarg = 'income_id'
+    success_url = reverse_lazy('income')

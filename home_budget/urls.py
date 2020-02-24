@@ -21,13 +21,14 @@ from django.urls import (
 from budget import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', views.Index.as_view(), name='index'),
-    path('summary/', views.Summary.as_view(), name='summary'),
-    path('income/', views.IncomeView.as_view(), name='income'),
-    path('expenses/', views.ExpensesView.as_view(), name='expenses'),
     path('add-category/', views.AddCategory.as_view(), name='add-category'),
-    path('expense/delete/<int:expense_id>/', views.DeleteExpense.as_view(), name='delete-expense'),
+    path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
+    path('expense/delete/<int:expense_id>/', views.DeleteExpenseView.as_view(), name='delete-expense'),
+    path('expenses/', views.ExpensesView.as_view(), name='expenses'),
+    path('income/', views.IncomeView.as_view(), name='income'),
+    path('income/delete/<int:income_id>/', views.DeleteIncomeView.as_view(), name='delete-income'),
+    path('summary/', views.Summary.as_view(), name='summary'),
     path('users/', include('users.urls')),
 ]
