@@ -3,7 +3,9 @@ from django.contrib.auth import (
     login,
     logout,
 )
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import (
+    UserCreationForm,
+)
 from django.contrib.auth.models import (
     User,
 )
@@ -56,25 +58,10 @@ class RegisterView(View):
             context = {
                 'form': form,
             }
-            return render(request, 'register.html', context)
-
-
-# class RegisterView(View):
-#
-#     def get(self, request):
-#         return render(request, 'register.html')
-#
-#     def post(self, request):
-#         username = request.POST.get('username')
-#         pass1 = request.POST.get('password_1')
-#         pass2 = request.POST.get('password_2')
-#
-#         if username is not None and len(username) > 6:
-#             if pass1 == pass2 and pass1 is not None and len(pass1) > 6:
-#                 User.objects.create_user(username=username, password=pass1)
-#                 return redirect('login')
-#
-#         return render(request, 'register.html',)
+            return render(
+                request,
+                'register.html',
+                context)
 
 
 class LogoutView(View):
