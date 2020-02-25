@@ -70,6 +70,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'budget.context_processor.sidebars',
+                'budget.context_processor.add_entry_form',
             ],
         },
     },

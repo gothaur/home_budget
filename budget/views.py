@@ -7,7 +7,9 @@ from django.shortcuts import (
     redirect,
 )
 from django.urls import reverse_lazy
-from django.utils import timezone
+from django.utils import (
+    timezone,
+)
 from django.views import (
     View,
 )
@@ -17,6 +19,9 @@ from django.views.generic import (
 from home_budget.functions import (
     data_filter,
     get_month_names,
+)
+from budget.forms import (
+    AddExpenseForm,
 )
 from budget.models import (
     Category,
@@ -61,13 +66,19 @@ class ExpensesView(LoginRequiredMixin, View):
         return render(request, 'expenses.html', context)
 
     def post(self, request):
-        date = request.POST.get('date')
-        category = request.POST.get('category')
-        amount = request.POST.get('amount')
-        comment = request.POST.get('comment')
 
-        Expenses.objects.create(date=date, category=Category.objects.get(pk=category),
-                                amount=amount, comment=comment, user=request.user)
+        form = AddExpenseForm(
+            request.POST,
+        )
+
+        if form.is_valid():
+            date = form.cleaned_data['date']
+            category = form.cleaned_data['category']
+            amount = form.cleaned_data['amount']
+            comment = form.cleaned_data['comment']
+
+            Expenses.objects.create(date=date, category=category,
+                                    amount=amount, comment=comment, user=request.user)
 
         return redirect('expenses')
 
@@ -122,7 +133,7 @@ class Summary(LoginRequiredMixin, View):
             result.append([])
             for month in range(1, 13):
                 monthly_amount = 0
-                for expense in Expenses.objects.filter(user=request.user).filter(category__name=category)\
+                for expense in Expenses.objects.filter(user=request.user).filter(category__name=category) \
                         .filter(date__year=timezone.now().year).filter(date__month=month):
                     monthly_amount += expense.amount
                 result[i].append(monthly_amount)

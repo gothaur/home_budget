@@ -36,16 +36,4 @@
       </table>
     </div>
   </div>
-
-  <script>
-      console.log($('#selected_category'));
-      let category = document.getElementById('selected_category');
-      category.addEventListener('change', function(event){
-          let selected_category = JSON.stringify({'selected_category': event.currentTarget.value});
-          let category = window.location.href + "?category=" + event.currentTarget.value;
-          window.location.replace(category);
-
-      });
-  </script>
-
 {% endblock %}

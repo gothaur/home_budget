@@ -9,6 +9,9 @@ from django.db import (
 class Category(models.Model):
     name = models.CharField(max_length=32)
 
+    def __str__(self):
+        return self.name
+
 
 class Income(models.Model):
     date = models.DateField()

@@ -1,9 +1,6 @@
 from django.contrib.auth.forms import (
     UserCreationForm,
 )
-from django.contrib.auth.models import (
-    User,
-)
 from django.shortcuts import (
     render,
     redirect,
@@ -11,14 +8,8 @@ from django.shortcuts import (
 from django.views import (
     View,
 )
-from django.views.generic import (
-    DetailView,
-)
 from budget.models import (
     Category,
-)
-from users.forms import (
-    EditUserForm,
 )
 
 
@@ -52,10 +43,8 @@ class SettingsView(View):
 
     def get(self, request):
         user = request.user
-        # form = UserForm()
         context = {
             'user': user,
-            # 'form': form,
         }
         return render(request, 'settings.html', context)
 
@@ -73,15 +62,3 @@ class SettingsView(View):
             user.last_name = request.POST.get('last_name')            
             user.save()
             return redirect('settings')
-
-
-class UserView(DetailView):
-    model = User
-    context_object_name = 'user'
-    template_name = 'users/user-detail.html'
-    pk_url_kwarg = 'user_id'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = EditUserForm
-        return context
