@@ -8,10 +8,23 @@ from django.contrib.auth.models import (
 from django import forms
 
 
-class UserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = '__all__'
+class EditUserForm(forms.Form):
+    first_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control mb-3',
+                'placeholder': 'Imię',
+            }),
+        label='',
+    )
+    last_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control mb-3',
+                'placeholder': 'Nazwisko',
+            }),
+        label='',
+    )
 
 
 class LoginForm(AuthenticationForm):

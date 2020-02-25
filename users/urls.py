@@ -7,6 +7,7 @@ from users.views import (
     RegisterView,
     # LogoutView,
     SettingsView,
+    UserView,
 )
 from users.forms import (
     LoginForm,
@@ -29,4 +30,5 @@ urlpatterns = [
          ),
          name='logout'),
     path('edit/', SettingsView.as_view(), name='settings'),
+    path('edit/<int:user_id>', UserView.as_view(), name='user-detail'),
 ]

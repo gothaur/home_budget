@@ -1,0 +1,29 @@
+{% extends '__base_view__.html '%}
+{% block body %}
+    <table>
+        <tr>
+            <th>Imię:</th>
+            <td>{{ user.first_name }}<td>
+        </tr>
+        <tr>
+            <th>Nazwisko:</th>
+            <td>{{ user.last_name }}<td>
+        </tr>
+        <tr>
+            <th>Login:</th>
+            <td>{{ user.username }}<td>
+        </tr>
+    </table>
+    <div class="card text-center mx-auto mb-3" style="width: 26rem">
+    <div class="card-header text-center">
+      Edytuj dane
+    </div>
+    <div class="card-body">
+      <form class="form-group" name="LoginForm" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit" class="btn btn-primary form-control">Edytuj</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

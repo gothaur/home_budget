@@ -1,61 +1,25 @@
-# from django.contrib.auth import (
-#     authenticate,
-#     login,
-#     logout,
-# )
 from django.contrib.auth.forms import (
     UserCreationForm,
 )
-# from django.contrib.auth.views import (
-#     LoginView,
-# )
+from django.contrib.auth.models import (
+    User,
+)
 from django.shortcuts import (
     render,
     redirect,
 )
-# from django.urls import reverse_lazy
 from django.views import (
     View,
+)
+from django.views.generic import (
+    DetailView,
 )
 from budget.models import (
     Category,
 )
-
-# from users.forms import (
-#     LoginForm,
-# )
-#
-#
-# class MyLoginView(View):
-#
-#     def get(self, request):
-#         logout(request)
-#         ctx = {
-#             'form': LoginForm()
-#         }
-#         return render(
-#             request,
-#             'login.html',
-#             ctx,
-#         )
-#
-#     def post(self, request):
-#
-#         form = LoginForm(request.POST)
-#         if form.is_valid():
-#             user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
-#             if user is not None:
-#                 # if user.is_active():
-#                 login(request, user)
-#                 request.session['username'] = user.username
-#                 return redirect(request.GET.get('next', '/'))
-#
-#         return redirect('login')
-
-
-# class MyLoginView(LoginView):
-#
-#     success_url = reverse_lazy('index')
+from users.forms import (
+    EditUserForm,
+)
 
 
 class RegisterView(View):
@@ -84,13 +48,6 @@ class RegisterView(View):
             )
 
 
-# class LogoutView(View):
-#
-#     def get(self, request):
-#         logout(request)
-#         return render(request, 'logout.html')
-
-
 class SettingsView(View):
 
     def get(self, request):
@@ -113,5 +70,18 @@ class SettingsView(View):
         if form_name == 'edit_user':
             user = request.user
             user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')            
             user.save()
             return redirect('settings')
+
+
+class UserView(DetailView):
+    model = User
+    context_object_name = 'user'
+    template_name = 'users/user-detail.html'
+    pk_url_kwarg = 'user_id'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = EditUserForm
+        return context
