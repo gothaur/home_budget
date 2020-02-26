@@ -62,6 +62,8 @@ class ExpensesView(LoginRequiredMixin, View):
         context = {
             'categories': categories,
             'expenses': expenses,
+            'date_from': date_from,
+            'date_to': date_to,
         }
         return render(request, 'expenses.html', context)
 

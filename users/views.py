@@ -1,3 +1,6 @@
+from django.contrib import (
+    messages,
+)
 from django.contrib.auth.forms import (
     UserCreationForm,
 )
@@ -61,9 +64,14 @@ class SettingsView(View):
     def post(self, request):
 
         form_name = request.POST.get('form_name')
-        
+
         if form_name == 'add_category':
             Category.objects.create(name=request.POST.get('category'))
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                "Pomyślnie dodano nową kategorię",
+            )
             return redirect('settings')
 
         if form_name == 'edit_user':
@@ -74,5 +82,10 @@ class SettingsView(View):
                 user.last_name = user_form.cleaned_data['last_name']
                 user.email = user_form.cleaned_data['email']
                 user.save()
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    "Pomyślnie zmieniono dane",
+                )
 
         return redirect('settings')

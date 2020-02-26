@@ -1,0 +1,119 @@
+{% extends "__base_view__.html" %}
+{% block title %}Rejestracja{% endblock title %}
+{% block body %}
+
+  {% if form.username.errors %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <ol>
+        {% for err in form.username.errors %}
+          <li>
+            {{ err|escape }}
+          </li>
+        {% endfor %}
+      </ol>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  {% endif %}
+  {% if form.password1.errors %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <ol>
+        {% for err in form.password1.errors %}
+          <li>
+            {{ err|escape }}
+          </li>
+        {% endfor %}
+      </ol>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  {% endif %}
+  {% if form.password2.errors %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <ol>
+        {% for err in form.password2.errors %}
+          <li>
+            {{ err|escape }}
+          </li>
+        {% endfor %}
+      </ol>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  {% endif %}
+
+  <div class="card text-center mx-auto" style="width: 26rem; margin-top: 10px">
+    <div class="card-header text-center">
+      Zarejestruj nowe konto
+    </div>
+    <div class="card-body text-left">
+      <form name="RegisterForm" method="post">
+        <div class="form-group">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="id_username">Nazwa użytkownika</label>
+            <input class="form-control" type="text" name="username" maxlength="150" autocapitalize="none"
+                   autocomplete="username" autofocus="" required id="id_username">
+            <small id="usernameHelp" class="form-text text-muted helptext">Wymagana. 150 lub mniej znaków. Jedynie litery, cyfry i @/./+/-/_.</small>
+          </div>
+          <div class="form-group">
+            <label for="id_password1">Hasło</label>
+            <input class="form-control" type="password" name="password1" autocomplete="new-password"
+                   required id="id_password1">
+            <small id="usernameHelp" class="form-text text-muted helptext">
+              Twoje hasło nie może być zbyt podobne do twoich innych danych osobistych.<br>
+              Twoje hasło musi zawierać co najmniej 8 znaków.<br>
+              Twoje hasło nie może być powszechnie używanym hasłem.<br>
+              Twoje hasło nie może składać się tylko z cyfr.
+            </small>
+          </div>
+          <div class="form-group">
+            <label for="id_password2">Potwierdź hasło</label>
+            <input class="form-control" type="password" name="password2" autocomplete="new-password" required="" id="id_password2">
+            <small class="form-text text-muted helptext">Wprowadź to samo hasło ponownie, dla weryfikacji.</small>
+          </div>
+          <!-- Button trigger modal -->
+          <small id="usernameHelp" class="form-text text-muted helptext mb-3">
+            Klikając przycisk Zarejestruj się, akceptujesz
+            <a href="#" data-toggle="modal" data-target="#exampleModalScrollable">Regulamin</a>.
+          </small>
+
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalScrollableTitle">Regulamin</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Et ligula ullamcorper malesuada proin libero nunc consequat interdum. Convallis a cras semper auctor neque vitae tempus quam. Ac ut consequat semper viverra nam libero justo. Lobortis elementum nibh tellus molestie nunc non blandit massa enim. Non nisi est sit amet facilisis. Lectus quam id leo in vitae turpis massa sed. Dapibus ultrices in iaculis nunc sed augue lacus viverra. Tincidunt dui ut ornare lectus sit amet est placerat. Lobortis elementum nibh tellus molestie nunc non blandit massa enim. Massa massa ultricies mi quis hendrerit dolor magna eget. Quis risus sed vulputate odio ut enim blandit volutpat. Sed odio morbi quis commodo odio aenean sed adipiscing. Diam vel quam elementum pulvinar etiam non quam lacus. Nunc aliquet bibendum enim facilisis gravida neque convallis a cras. Vitae elementum curabitur vitae nunc sed velit.
+
+                  Facilisi cras fermentum odio eu feugiat pretium nibh ipsum. Sed sed risus pretium quam vulputate dignissim suspendisse. Sagittis orci a scelerisque purus semper eget duis at. Morbi enim nunc faucibus a pellentesque. At risus viverra adipiscing at in tellus integer feugiat scelerisque. Et pharetra pharetra massa massa ultricies. Aliquam ultrices sagittis orci a scelerisque. Non tellus orci ac auctor augue mauris augue neque gravida. Lectus quam id leo in vitae turpis. Ante in nibh mauris cursus mattis molestie a iaculis at. Praesent elementum facilisis leo vel fringilla est ullamcorper eget.
+
+                  Ut etiam sit amet nisl purus in mollis nunc. Eget mi proin sed libero enim sed faucibus turpis in. Sed egestas egestas fringilla phasellus faucibus scelerisque eleifend donec. Blandit turpis cursus in hac. A erat nam at lectus. Ante metus dictum at tempor commodo ullamcorper. Orci porta non pulvinar neque laoreet suspendisse interdum consectetur. Fringilla phasellus faucibus scelerisque eleifend donec pretium vulputate. Faucibus in ornare quam viverra orci sagittis eu volutpat. Semper eget duis at tellus. Volutpat blandit aliquam etiam erat velit scelerisque in. Ipsum dolor sit amet consectetur adipiscing elit ut aliquam purus. Aliquam ut porttitor leo a. Consectetur lorem donec massa sapien faucibus. Eu volutpat odio facilisis mauris sit amet. Duis tristique sollicitudin nibh sit amet commodo nulla facilisi. Mauris commodo quis imperdiet massa tincidunt nunc pulvinar sapien. Quisque id diam vel quam elementum pulvinar etiam non quam.
+
+                  Fames ac turpis egestas maecenas pharetra convallis posuere morbi leo. Mauris cursus mattis molestie a iaculis at erat pellentesque adipiscing. Ut eu sem integer vitae justo eget magna fermentum iaculis. Neque egestas congue quisque egestas. Id semper risus in hendrerit gravida. Platea dictumst quisque sagittis purus sit amet volutpat consequat. Ac orci phasellus egestas tellus rutrum tellus pellentesque. Adipiscing vitae proin sagittis nisl rhoncus. Ut ornare lectus sit amet est placerat in. Turpis massa tincidunt dui ut ornare lectus sit amet est. Dui vivamus arcu felis bibendum ut tristique et egestas quis. Sed viverra tellus in hac. Felis bibendum ut tristique et egestas quis ipsum. Elementum nisi quis eleifend quam adipiscing vitae proin sagittis. Dui sapien eget mi proin sed libero. Platea dictumst quisque sagittis purus sit amet volutpat consequat mauris.
+
+                  Amet nisl purus in mollis. Nisi porta lorem mollis aliquam. Nisl nunc mi ipsum faucibus vitae aliquet nec. Aliquet porttitor lacus luctus accumsan tortor. Pulvinar pellentesque habitant morbi tristique senectus et netus et malesuada. Egestas egestas fringilla phasellus faucibus scelerisque. Molestie a iaculis at erat pellentesque adipiscing commodo elit at. Etiam tempor orci eu lobortis elementum nibh tellus. Venenatis cras sed felis eget velit aliquet. Auctor augue mauris augue neque gravida in fermentum et sollicitudin. Egestas erat imperdiet sed euismod nisi porta lorem mollis aliquam. Arcu risus quis varius quam quisque id diam vel. Faucibus ornare suspendisse sed nisi.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Zamknij</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary form-control">Zarejestruj się</button>
+        </div>
+      </form>
+    </div>
+    <div class="card-footer text-muted">
+      Masz już konto? <a href="{% url 'login' %}">Zaloguj się</a>
+    </div>
+  </div>
+{% endblock %}

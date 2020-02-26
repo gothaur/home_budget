@@ -125,6 +125,7 @@ STATICFILES_DIRS = [
     'static',
 ]
 
+# AUTH_USER_MODEL = 'users.User'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
