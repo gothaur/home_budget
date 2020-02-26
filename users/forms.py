@@ -1,14 +1,27 @@
 from django.contrib.auth.forms import (
-    UserCreationForm,
     AuthenticationForm,
-)
-from django.contrib.auth.models import (
-    User,
 )
 from django import forms
 
 
 class EditUserForm(forms.Form):
+    form_name = forms.CharField(
+        widget=forms.HiddenInput(
+            attrs={
+                'value': 'edit_user',
+            }
+        ),
+    )
+    username = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control mb-3',
+            }
+        ),
+        label='Login',
+        disabled=True,
+        required=False
+    )
     first_name = forms.CharField(
         widget=forms.TextInput(
             attrs={
@@ -24,6 +37,15 @@ class EditUserForm(forms.Form):
                 'placeholder': 'Nazwisko',
             }),
         label='',
+    )
+    email = forms.CharField(
+        widget=forms.EmailInput(
+            attrs={
+                'class': 'form-control mb-3',
+                'placeholder': 'email',
+            }),
+        label='',
+        required=False,
     )
 
 

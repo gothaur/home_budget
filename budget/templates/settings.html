@@ -46,28 +46,20 @@
           Edytuj dane
         </div>
         <div class="card-body">
-          <form class="form-group" name="LoginForm" method="post">
+          {% if user_form.last_name.errors %}
+            <ol>
+            {% for err in user_form.last_name.errors %}
+              <li>
+                <strong>
+                  {{ err|escape }}
+                </strong>
+              </li>
+            {% endfor %}
+            </ol>
+          {% endif %}
+          <form class="form-group" method="post">
             {% csrf_token %}
-            {% if next %}
-              <input type="hidden" name="next" value="{{ next }}" />
-            {% endif %}
-            <input type="hidden" name="form_name" value="edit_user">
-            <div class="form-group">
-              <label for="username">Nazwa użytkownika</label>
-              <input class="form-control" type="text" id="username" name="username" value="{{ user.username }}" placeholder="Nazwa użytkownika">
-            </div>
-            <div class="form-group">
-              <label for="first_name">Imię</label>
-              <input class="form-control" type="text" id="first_name" name="first_name" value="{{ user.first_name }}" placeholder="Imię">
-            </div>
-            <div class="form-group">
-              <label for="last_name">Nazwisko</label>
-              <input class="form-control" type="text" id="last_name" name="last_name" value="{{ user.last_name }}" placeholder="Nazwisko">
-            </div>
-            <div class="form-group">
-              <label for="email">e-mail</label>
-              <input class="form-control" type="email" id="email" name="email" value="{{ user.email }}" placeholder="e-mail">
-            </div>
+            {{ user_form }}
             <button type="submit" class="btn btn-primary form-control">Edytuj</button>
           </form>
         </div>

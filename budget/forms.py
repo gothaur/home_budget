@@ -1,11 +1,14 @@
 from django import forms
+from django.utils import timezone
 from budget.models import (
     Category,
 )
-from django.utils import timezone
 
 
 class AddExpenseForm(forms.Form):
+    """
+        Add Expense form
+    """
     date = forms.DateField(
         widget=forms.DateInput(
             attrs={
