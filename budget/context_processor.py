@@ -1,5 +1,3 @@
-from django.utils import timezone
-import datetime
 from budget.forms import (
     AddExpenseForm,
     AddIncomeForm,
@@ -11,6 +9,8 @@ def sidebars(request):
         message = "expenses"
     elif request.path == '/income/':
         message = "income"
+    elif request.path == '/summary/':
+        message = "summary"
     else:
         message = None
     return {'message': message}
