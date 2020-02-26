@@ -1,9 +1,6 @@
 from django.contrib.auth.forms import (
     UserCreationForm,
 )
-from django.contrib.auth.models import (
-    User,
-)
 from django.shortcuts import (
     render,
     redirect,
@@ -68,7 +65,7 @@ class SettingsView(View):
         if form_name == 'add_category':
             Category.objects.create(name=request.POST.get('category'))
             return redirect('settings')
-            
+
         if form_name == 'edit_user':
             user_form = EditUserForm(request.POST)
             if user_form.is_valid():
