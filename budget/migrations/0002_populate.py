@@ -6,21 +6,21 @@ from budget.models import Category
 
 
 def populate(apps, schema_editor):
-    Category.objects.create(name="Chemia")
-    Category.objects.create(name="Kosmetyki")
-    Category.objects.create(name="Kotecki")
-    Category.objects.create(name="Domek")
-    Category.objects.create(name="Inne")
-    Category.objects.create(name="Rozrywka")
-    Category.objects.create(name="Rachunki")
-    Category.objects.create(name="Kredyty")
-    Category.objects.create(name="Samochody")
-    Category.objects.create(name="Transport")
-    Category.objects.create(name="Dzieci")
-    Category.objects.create(name="Prezenty")
-    Category.objects.create(name="Lekarstwa")
-    Category.objects.create(name="Higiena")
-    Category.objects.create(name="Zachcianki")
+    Category.objects.create(name="Chemia", default_category=True)
+    Category.objects.create(name="Kosmetyki", default_category=True)
+    Category.objects.create(name="Kotecki", default_category=True)
+    Category.objects.create(name="Domek", default_category=True)
+    Category.objects.create(name="Inne", default_category=True)
+    Category.objects.create(name="Rozrywka", default_category=True)
+    Category.objects.create(name="Rachunki", default_category=True)
+    Category.objects.create(name="Kredyty", default_category=True)
+    Category.objects.create(name="Samochody", default_category=True)
+    Category.objects.create(name="Transport", default_category=True)
+    Category.objects.create(name="Dzieci", default_category=True)
+    Category.objects.create(name="Prezenty", default_category=True)
+    Category.objects.create(name="Lekarstwa", default_category=True)
+    Category.objects.create(name="Higiena", default_category=True)
+    Category.objects.create(name="Zachcianki", default_category=True)
 
 
 class Migration(migrations.Migration):

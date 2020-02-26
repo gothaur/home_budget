@@ -11,11 +11,14 @@ from django.shortcuts import (
 from django.views import (
     View,
 )
+from budget.models import (
+    Category,
+)
 from users.forms import (
     EditUserForm,
 )
-from budget.models import (
-    Category,
+from users.models import (
+    UsersCategory,
 )
 
 
@@ -32,7 +35,14 @@ class RegisterView(View):
         form = UserCreationForm(request.POST)
 
         if form.is_valid():
-            form.save()
+            categories = Category.objects.filter(default_category=True)
+            user = form.save(commit=False)
+            user.save()
+            # print(user)
+            uc = UsersCategory(user=user)
+            # uc.category.set(categories)
+            uc.save()
+            # uc.category.set(categories)
             return redirect('login')
         else:
             context = {
@@ -66,7 +76,12 @@ class SettingsView(View):
         form_name = request.POST.get('form_name')
 
         if form_name == 'add_category':
-            Category.objects.create(name=request.POST.get('category'))
+            category = Category.objects.create(
+                name=request.POST.get('category'),
+                default_category=False,
+            )
+            user = UsersCategory.objects.get(user=request.user)
+            user.category.add(category)
             messages.add_message(
                 request,
                 messages.SUCCESS,

@@ -8,6 +8,7 @@ from django.db import (
 
 class Category(models.Model):
     name = models.CharField(max_length=32)
+    default_category = models.BooleanField()
 
     def __str__(self):
         return self.name
