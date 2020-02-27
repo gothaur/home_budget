@@ -34,7 +34,7 @@
       </li>
       {% if not user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'register' %}">Zarejestruj</a>
+          <a class="nav-link" href="{% url 'users:register' %}">Zarejestruj</a>
         </li>
       {% else %}
         <li class="nav-item dropdown">
@@ -42,9 +42,9 @@
             {{ user.get_username }}
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="{% url 'settings' %}">Ustawienia</a>
+            <a class="dropdown-item" href="{% url 'users:settings' %}">Ustawienia</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'logout' %}">Wyloguj</a>
+            <a class="dropdown-item" href="{% url 'users:logout' %}">Wyloguj</a>
           </div>
         </li>
       {% endif %}
@@ -67,6 +67,21 @@
       <div class="card">
         <div class="card-body">
           {% if message == 'expenses' %}
+            {% for err in expense_form.user.errors %}
+              <li>
+                {{ err|escape }}
+              </li>
+            {% endfor %}
+            {% for err in expense_form.amount.errors %}
+              <li>
+                {{ err|escape }}
+              </li>
+            {% endfor %}
+            {% for err in expense_form.category.errors %}
+              <li>
+                {{ err|escape }}
+              </li>
+            {% endfor %}
             <form method="post" class="form-group">
               {% csrf_token %}
               {{ expense_form }}

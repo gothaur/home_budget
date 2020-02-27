@@ -6,10 +6,6 @@ from django.utils import timezone
 
 def data_filter(request, model, date_from, date_to, selected_category="-1",
                 month=timezone.now().month, year=timezone.now().year):
-    # year = datetime.date.today().year
-    # month = datetime.date.today().month
-    # year = timezone.now().year
-    # month = timezone.now().month
 
     if date_from == "":
         date_from = datetime.date(year=year,
@@ -34,16 +30,3 @@ def data_filter(request, model, date_from, date_to, selected_category="-1",
 
 def get_month_names():
     return [datetime.date(2000, m, 1) for m in range(1, 13)]
-
-
-def form_is_valid(username, pass1, pass2):
-
-    required_chars = '<>!@#$%^&*(){}[]'
-
-    for char in pass1:
-        if char in required_chars:
-            return True
-
-    if len(pass1) > 7 and pass1 == pass2:
-        return True
-    return False

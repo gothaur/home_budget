@@ -22,13 +22,13 @@ from budget import views
 
 urlpatterns = [
     path('', views.Index.as_view(), name='index'),
-    path('add-category/', views.AddCategory.as_view(), name='add-category'),
+    # path('add-category/', views.AddCategory.as_view(), name='add-category'),
     path('admin/', admin.site.urls),
-    path('api/', include('api.urls')),
+    path('api/', include('api.urls', namespace='api'),),
     path('expense/delete/<int:expense_id>/', views.DeleteExpenseView.as_view(), name='delete-expense'),
     path('expenses/', views.ExpensesView.as_view(), name='expenses'),
     path('income/', views.IncomeView.as_view(), name='income'),
     path('income/delete/<int:income_id>/', views.DeleteIncomeView.as_view(), name='delete-income'),
     path('summary/', views.Summary.as_view(), name='summary'),
-    path('users/', include('users.urls')),
+    path('users/', include('users.urls',  namespace='users'),),
 ]

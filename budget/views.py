@@ -2,6 +2,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
 )
+from django.contrib.auth.models import (
+    User,
+)
 from django.shortcuts import (
     render,
     redirect,
@@ -34,7 +37,7 @@ class Index(View):
 
     def get(self, request):
         if not request.user.is_authenticated:
-            return redirect('login')
+            return redirect('users:login')
         else:
             return redirect('expenses')
 
@@ -46,7 +49,7 @@ class Index(View):
             request.session['username'] = user.username
             return redirect('summary')
 
-        return redirect('login')
+        return redirect('users:login')
 
 
 class ExpensesView(LoginRequiredMixin, View):
@@ -57,7 +60,8 @@ class ExpensesView(LoginRequiredMixin, View):
         selected_category = request.GET.get("selected_category", "-1")
         expenses = data_filter(request, Expenses, date_from, date_to, selected_category)
 
-        categories = Category.objects.order_by('name')
+        user = User.objects.get(pk=request.user.id)
+        categories = user.profile.categories.order_by('name')
 
         context = {
             'categories': categories,
@@ -74,6 +78,7 @@ class ExpensesView(LoginRequiredMixin, View):
         )
 
         if form.is_valid():
+            print('walidacja')
             date = form.cleaned_data['date']
             category = form.cleaned_data['category']
             amount = form.cleaned_data['amount']
@@ -106,17 +111,6 @@ class IncomeView(LoginRequiredMixin, View):
         return redirect('income')
 
 
-class AddCategory(LoginRequiredMixin, View):
-
-    def get(self, request):
-        return render(request, 'add-category.html')
-
-    def post(self, request):
-        name = request.POST.get('name')
-        Category.objects.create(name=name)
-        return redirect('index')
-
-
 class Summary(LoginRequiredMixin, View):
 
     def get(self, request):
@@ -127,7 +121,9 @@ class Summary(LoginRequiredMixin, View):
         total_savings = total_income - total_expenses
 
         months = get_month_names()
-        categories = [category.name for category in Category.objects.order_by('name')]
+        # categories = [category.name for category in Category.objects.order_by('name')]
+        user = User.objects.get(pk=request.user.id)
+        categories = [category.name for category in user.profile.categories.order_by('name')]
 
         result = []
 

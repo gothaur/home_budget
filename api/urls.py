@@ -3,6 +3,8 @@ from django.urls import (
 )
 from api import views
 
+app_name = 'api'
+
 urlpatterns = [
     path('expenses/', views.ExpensesList.as_view(), name='api-expenses'),
     path('income/', views.IncomeList.as_view(), name='api-income'),

@@ -1,4 +1,7 @@
 from django import forms
+from django.contrib.auth.models import (
+    User,
+)
 from django.utils import timezone
 from budget.models import (
     Category,
@@ -6,9 +9,24 @@ from budget.models import (
 
 
 class AddExpenseForm(forms.Form):
-    """
-        Add Expense form
-    """
+
+    def __init__(self, filter_on, *args, **kwargs):
+        super(AddExpenseForm, self).__init__(*args, **kwargs)
+        self.fields['category'] = forms.ModelChoiceField(
+            queryset=Category.objects.filter(profile__user__username=filter_on).order_by('name'),
+            widget=forms.Select(
+                attrs={
+                    'class': 'form-control mb-2 mr-sm-2',
+                }
+            ),
+            label='Kategoria',
+        )
+
+    user = forms.CharField(
+        widget=forms.HiddenInput(
+        ),
+        required=False,
+    )
     date = forms.DateField(
         widget=forms.DateInput(
             attrs={
@@ -30,13 +48,14 @@ class AddExpenseForm(forms.Form):
         max_digits=8,
     )
     category = forms.ModelChoiceField(
-        queryset=Category.objects.order_by('name'),
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control mb-2 mr-sm-2',
-            }
-        ),
-        label='Kategoria',
+        queryset=Category.objects.filter(profile__user__username=user).order_by('name'),
+        # queryset=Category.objects.order_by('name'),
+        # widget=forms.Select(
+        #     attrs={
+        #         'class': 'form-control mb-2 mr-sm-2',
+        #     }
+        # ),
+        # label='Kategoria',
     )
     comment = forms.CharField(
         widget=forms.Textarea(

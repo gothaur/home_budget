@@ -4,8 +4,8 @@ from django.contrib import (
 from django.contrib.auth.forms import (
     UserCreationForm,
 )
-from django.contrib.auth.models import (
-    User
+from django.db import (
+    IntegrityError,
 )
 from django.shortcuts import (
     render,
@@ -47,7 +47,7 @@ class RegisterView(View):
             )
             profile.save()
             profile.categories.set(categories)
-            return redirect('login')
+            return redirect('users:login')
         else:
             context = {
                 'form': form,
@@ -80,10 +80,18 @@ class SettingsView(View):
         form_name = request.POST.get('form_name')
 
         if form_name == 'add_category':
-            category = Category.objects.create(
-                name=request.POST.get('category'),
-                default_category=False,
-            )
+            try:
+                category = Category.objects.create(
+                    name=request.POST.get('category'),
+                    default_category=False,
+                )
+            except IntegrityError:
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    "Taka kategoria już istnieje",
+                )
+                return redirect('users:settings')
             user = request.user
             user.profile.categories.add(category)
             messages.add_message(
@@ -91,7 +99,7 @@ class SettingsView(View):
                 messages.SUCCESS,
                 "Pomyślnie dodano nową kategorię",
             )
-            return redirect('settings')
+            return redirect('users:settings')
 
         if form_name == 'edit_user':
             user_form = EditUserForm(request.POST)
@@ -107,4 +115,4 @@ class SettingsView(View):
                     "Pomyślnie zmieniono dane",
                 )
 
-        return redirect('settings')
+        return redirect('users:settings')
