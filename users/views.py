@@ -4,6 +4,9 @@ from django.contrib import (
 from django.contrib.auth.forms import (
     UserCreationForm,
 )
+from django.contrib.auth.models import (
+    User
+)
 from django.shortcuts import (
     render,
     redirect,
@@ -18,7 +21,7 @@ from users.forms import (
     EditUserForm,
 )
 from users.models import (
-    UsersCategory,
+    Profile,
 )
 
 
@@ -35,14 +38,15 @@ class RegisterView(View):
         form = UserCreationForm(request.POST)
 
         if form.is_valid():
-            categories = Category.objects.filter(default_category=True)
-            user = form.save(commit=False)
-            user.save()
-            # print(user)
-            uc = UsersCategory(user=user)
-            # uc.category.set(categories)
-            uc.save()
-            # uc.category.set(categories)
+            categories = Category.objects.filter(
+                default_category=True,
+            )
+            user = form.save()
+            profile = Profile(
+                user=user,
+            )
+            profile.save()
+            profile.categories.set(categories)
             return redirect('login')
         else:
             context = {
@@ -80,8 +84,8 @@ class SettingsView(View):
                 name=request.POST.get('category'),
                 default_category=False,
             )
-            user = UsersCategory.objects.get(user=request.user)
-            user.category.add(category)
+            user = request.user
+            user.profile.categories.add(category)
             messages.add_message(
                 request,
                 messages.SUCCESS,
