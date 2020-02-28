@@ -81,25 +81,28 @@ class SettingsView(View):
 
         if form_name == 'add_category':
             try:
-                category = Category.objects.create(
-                    name=request.POST.get('category'),
-                    default_category=False,
+                category = Category.objects.get(
+                    name__iexact=request.POST.get('category')
                 )
-            except IntegrityError:
                 messages.add_message(
                     request,
                     messages.ERROR,
                     "Taka kategoria już istnieje",
                 )
                 return redirect('users:settings')
-            user = request.user
-            user.profile.categories.add(category)
-            messages.add_message(
-                request,
-                messages.SUCCESS,
-                "Pomyślnie dodano nową kategorię",
-            )
-            return redirect('users:settings')
+            # except IntegrityError, DoesNotExist:
+            except:
+                user = request.user
+                category = Category.objects.create(
+                    name=request.POST.get('category'),
+                    default_category=False)
+                user.profile.categories.add(category)
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    "Pomyślnie dodano nową kategorię",
+                )
+                return redirect('users:settings')
 
         if form_name == 'edit_user':
             user_form = EditUserForm(request.POST)

@@ -23,7 +23,7 @@ def add_entry_form(request):
         #     'user': request.user.username,
         #     'category': Category.objects.filter(profile__user__username=request.user.username).order_by('name'),
         # }
-        filter_on=request.user.username,
+        # filter_on=request.user.username,
     )
     income_form = AddIncomeForm(
         initial={

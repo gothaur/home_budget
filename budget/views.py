@@ -76,9 +76,13 @@ class ExpensesView(LoginRequiredMixin, View):
         form = AddExpenseForm(
             request.POST,
         )
+        # print(f"user: {request.POST.get('user')}")
+        # print(f"data: {request.POST.get('date')}")
+        # print(f"category: {request.POST.get('category')}")
+        # print(f"amount: {request.POST.get('amount')}")
+        # print(f"comment: {request.POST.get('comment')}")
 
         if form.is_valid():
-            print('walidacja')
             date = form.cleaned_data['date']
             category = form.cleaned_data['category']
             amount = form.cleaned_data['amount']
