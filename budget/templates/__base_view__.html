@@ -90,6 +90,14 @@
               <button type="submit" class="btn btn-outline-secondary form-control mb-2">Dodaj</button>
             </form>
           {% endif %}
+          {% if message == "settings" %}
+            Przypisz kategorię <hr>
+              {% for category in all_categories %}
+                {{ category.name }}<br>
+                {% empty %}
+                Brak kategorii
+              {% endfor %}
+          {% endif %}
         </div>
       </div>
     </div>
@@ -127,6 +135,17 @@
               <label for="category" class="mr-sm-2">Kategoria</label>
               <button type="submit" class="btn btn-outline-secondary form-control mb-2 mr-sm-2">Filtruj</button>
             </form>
+          {% endif %}
+          {% if message == "settings" %}
+            Usuń kategorię <hr>
+            {% for category in user_categories %}
+              {{ category.name }}
+              <form>
+                <button type='submit'>-</button>
+              </form> <br>
+              {% empty %}
+                Brak kategorii
+            {% endfor %}
           {% endif %}
         </div>
       </div>
