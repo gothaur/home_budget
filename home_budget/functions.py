@@ -7,12 +7,12 @@ from django.utils import timezone
 def data_filter(request, model, date_from, date_to, selected_category="-1",
                 month=timezone.now().month, year=timezone.now().year):
 
-    if date_from == "":
+    if date_from == timezone.localdate() or date_from == "":
         date_from = datetime.date(year=year,
                                   month=month,
                                   day=1)
 
-    if date_to == "":
+    if date_to == timezone.localdate() or date_to == "":
         date_to = datetime.date(year=year,
                                 month=month,
                                 day=calendar.monthrange(year, month)[1])

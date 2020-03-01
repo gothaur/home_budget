@@ -5,6 +5,13 @@
 {% endblock %}
 {% block body %}
   <div class="card mb-3">
+    <div class="card">
+      {% if date_from == month and date_to == month %}
+        Podsumowanie za: {{ month|date:"F" }}
+      {% else %}
+        Okres: {{ date_from }} - {{ date_to }}
+      {% endif %}
+    </div>
     <div class="card-body">
       <table class="table table-borderless table-hover">
         <thead class="thead-dark">

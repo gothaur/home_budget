@@ -1,4 +1,9 @@
-from django.contrib.auth import authenticate, login
+from datetime import datetime
+
+from django.contrib.auth import (
+    authenticate,
+    login,
+)
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
 )
@@ -6,8 +11,8 @@ from django.contrib.auth.models import (
     User,
 )
 from django.shortcuts import (
-    render,
     redirect,
+    render,
 )
 from django.urls import reverse_lazy
 from django.utils import (
@@ -25,9 +30,9 @@ from home_budget.functions import (
 )
 from budget.forms import (
     AddExpenseForm,
+    FilterExpensesForm,
 )
 from budget.models import (
-    Category,
     Expenses,
     Income,
 )
@@ -55,9 +60,9 @@ class Index(View):
 class ExpensesView(LoginRequiredMixin, View):
 
     def get(self, request):
-        date_from = request.GET.get("date_from", "")
-        date_to = request.GET.get("date_to", "")
-        selected_category = request.GET.get("selected_category", "-1")
+        date_from = request.GET.get("date_from", timezone.localdate())
+        date_to = request.GET.get("date_to", timezone.localdate())
+        selected_category = request.GET.get("category", "-1")
         expenses = data_filter(request, Expenses, date_from, date_to, selected_category)
 
         user = User.objects.get(pk=request.user.id)
@@ -68,6 +73,7 @@ class ExpensesView(LoginRequiredMixin, View):
             'expenses': expenses,
             'date_from': date_from,
             'date_to': date_to,
+            'today': timezone.localdate().strftime('%Y-%m-%d'),
         }
         return render(request, 'expenses.html', context)
 
@@ -76,11 +82,6 @@ class ExpensesView(LoginRequiredMixin, View):
         form = AddExpenseForm(
             request.POST,
         )
-        # print(f"user: {request.POST.get('user')}")
-        # print(f"data: {request.POST.get('date')}")
-        # print(f"category: {request.POST.get('category')}")
-        # print(f"amount: {request.POST.get('amount')}")
-        # print(f"comment: {request.POST.get('comment')}")
 
         if form.is_valid():
             date = form.cleaned_data['date']
@@ -97,11 +98,13 @@ class ExpensesView(LoginRequiredMixin, View):
 class IncomeView(LoginRequiredMixin, View):
 
     def get(self, request):
-        date_from = request.GET.get("date_from", "")
-        date_to = request.GET.get("date_to", "")
+        date_from = request.GET.get("date_from", timezone.localdate())
+        date_to = request.GET.get("date_to", timezone.localdate())
         incomes = data_filter(request, Income, date_from, date_to)
         context = {
             'incomes': incomes,
+            'date_from': date_from,
+            'date_to': date_to,
         }
         return render(request, 'income.html', context)
 
@@ -118,14 +121,13 @@ class IncomeView(LoginRequiredMixin, View):
 class Summary(LoginRequiredMixin, View):
 
     def get(self, request):
-        date_from = request.GET.get("date_from", "")
-        date_to = request.GET.get("date_to", "")
+        date_from = request.GET.get("date_from", timezone.localdate())
+        date_to = request.GET.get("date_to", timezone.localdate())
         total_income = sum([income.amount for income in data_filter(request, Income, date_from, date_to)])
         total_expenses = sum([expense.amount for expense in data_filter(request, Expenses, date_from, date_to)])
         total_savings = total_income - total_expenses
 
         months = get_month_names()
-        # categories = [category.name for category in Category.objects.order_by('name')]
         user = User.objects.get(pk=request.user.id)
         categories = [category.name for category in user.profile.categories.order_by('name')]
 
@@ -146,7 +148,9 @@ class Summary(LoginRequiredMixin, View):
             'total_savings': total_savings,
             'months': months,
             'categories': categories,
-            'result': result
+            'result': result,
+            'date_from': date_from,
+            'date_to': date_to,
         }
         return render(request, 'summary.html', context)
 

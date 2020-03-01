@@ -69,18 +69,29 @@
           {% if message == 'expenses' %}
             <form method="post" class="form-group">
               {% csrf_token %}
-              <tr><th><label for="id_date">Data:</label></th><td><input type="date" name="date" value="2020-02-28" class="form-control mb-2 mr-sm-2" required id="id_date"></td></tr>
-<tr><th><label for="id_amount">Kwota:</label></th><td><input type="number" name="amount" class="form-control mb-2 mr-sm-2" step="0.01" required id="id_amount"></td></tr>
-<tr><th><label for="id_category">Kategoria:</label></th><td><select name="category" class="form-control mb-2 mr-sm-2" required id="id_category">
-  <option value="" selected>---------</option>
-  {% for category in categories %}
-    <option value="{{ category.id }}">{{ category.name }}</option>
-  {% endfor %}
-
-</select></td></tr>
-<tr><th><label for="id_comment">Komentarz:</label></th><td><textarea name="comment" cols="40" rows="2" class="form-control mb-2 mr-sm-2" maxlength="255" id="id_comment">
-</textarea>
-              <button type="submit" class="btn btn-outline-secondary form-control mb-2">Dodaj</button>
+              <tr>
+                <th><label for="id_date">Data:</label></th>
+                <td><input type="date" name="date" value="{{ today }}" class="form-control mb-2 mr-sm-2" required id="id_date"></td>
+              </tr>
+              <tr>
+                <th><label for="id_amount">Kwota:</label></th>
+                <td><input type="number" name="amount" class="form-control mb-2 mr-sm-2" step="0.01" required id="id_amount"></td>
+              </tr>
+              <tr>
+                <th><label for="id_category">Kategoria:</label></th>
+                <td>
+                  <select name="category" class="form-control mb-2 mr-sm-2" required id="id_category">
+                    <option value="" selected>---------</option>
+                    {% for category in categories %}
+                      <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <th><label for="id_comment">Komentarz:</label></th>
+                <td><textarea name="comment" cols="40" rows="2" class="form-control mb-2 mr-sm-2" maxlength="255" id="id_comment"></textarea>
+                  <button type="submit" class="btn btn-outline-secondary form-control mb-2">Dodaj</button>
             </form>
           {% endif %}
           {% if message == "income" %}
@@ -92,11 +103,28 @@
           {% endif %}
           {% if message == "settings" %}
             Przypisz kategorię <hr>
+            <table>
+              <thead>
+              </thead>
+              <tbody>
               {% for category in all_categories %}
-                {{ category.name }}<br>
-                {% empty %}
+                <tr>
+                  <td style="width: 90%; text-align: left">{{ category.name }}</td>
+                  <td style="width: 10%; text-align: right">
+                    <form action="{% url 'users:signin-category' category.id %}" method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="form_name" value="sign_up_category">
+                      <button type='submit' class="btn btn-link btn-sm">
+                        <img src="https://img.icons8.com/officexs/16/000000/add.png" alt="+">
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              {% empty %}
                 Brak kategorii
               {% endfor %}
+              </tbody>
+            </table>
           {% endif %}
         </div>
       </div>
@@ -109,13 +137,29 @@
       <div class="card">
         <div class="card-body">
           {% if message == "expenses" %}
+            {#            <form class="form-group">#}
+            {#              <label for="date" class="mr-sm-2">Od</label>#}
+            {#              <input type="date" id="date" name="date_from" class="form-control mb-2 mr-sm-2">#}
+            {#              <label for="date" class="mr-sm-2">Do</label>#}
+            {#              <input type="date" id="date" name="date_to" class="form-control mb-2 mr-sm-2">#}
+            {#              <label for="category" class="mr-sm-2">Kategoria</label>#}
+            {#              <select id="category" name="selected_category" class="form-control mb-2 mr-sm-2">#}
+            {#                <option value=-1 selected>Wszystko</option>#}
+            {#                {% for category in categories %}#}
+            {#                  <option value="{{ category.id }}">{{ category.name }}</option>#}
+            {#                {% empty %}#}
+            {#                  <option>Brak zdefiniowanych kategorii</option>#}
+            {#                {% endfor %}#}
+            {#              </select>#}
+            {#              <button type="submit" class="btn btn btn-outline-secondary form-control mb-2 mr-sm-2">Filtruj</button>#}
+            {#            </form>#}
             <form class="form-group">
-              <label for="date" class="mr-sm-2">Od</label>
-              <input type="date" id="date" name="date_from" class="form-control mb-2 mr-sm-2">
-              <label for="date" class="mr-sm-2">Do</label>
-              <input type="date" id="date" name="date_to" class="form-control mb-2 mr-sm-2">
-              <label for="category" class="mr-sm-2">Kategoria</label>
-              <select id="category" name="selected_category" class="form-control mb-2 mr-sm-2">
+              <label for="id_date_from" class="mr-sm-2">Od</label>
+              <input type="date" name="date_from" class="form-control mb-2 mr-sm-2" id="id_date_from">
+              <label for="id_date_to" class="mr-sm-2">Do</label>
+              <input type="date" name="date_to" class="form-control mb-2 mr-sm-2" id="id_date_to">
+              <label for="id_category" class="mr-sm-2">Kategoria</label>
+              <select name="category" class="form-control mb-2 mr-sm-2" id="id_category">
                 <option value=-1 selected>Wszystko</option>
                 {% for category in categories %}
                   <option value="{{ category.id }}">{{ category.name }}</option>
@@ -132,20 +176,32 @@
               <input type="date" id="date" name="date_from" class="form-control mb-2 mr-sm-2">
               <label for="date" class="mr-sm-2">Do</label>
               <input type="date" id="date" name="date_to" class="form-control mb-2 mr-sm-2">
-              <label for="category" class="mr-sm-2">Kategoria</label>
               <button type="submit" class="btn btn-outline-secondary form-control mb-2 mr-sm-2">Filtruj</button>
             </form>
           {% endif %}
           {% if message == "settings" %}
             Usuń kategorię <hr>
-            {% for category in user_categories %}
-              {{ category.name }}
-              <form>
-                <button type='submit'>-</button>
-              </form> <br>
+            <table>
+              <thead>
+              </thead>
+              <tbody>
+              {% for category in user_categories %}
+                <tr>
+                  <td style="width: 90%; text-align: left">{{ category.name }}</td>
+                  <td style="width: 10%; text-align: right">
+                    <form action="{% url 'users:signout-category' category.id %}" method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="form_name" value="sign_out_category">
+                      <button type='submit' class="btn btn-link btn-sm">
+                        <img src="https://img.icons8.com/color/16/000000/minus.png" alt="-"></button>
+                    </form>
+                  </td>
+                </tr>
               {% empty %}
                 Brak kategorii
-            {% endfor %}
+              {% endfor %}
+              </tbody>
+            </table>
           {% endif %}
         </div>
       </div>

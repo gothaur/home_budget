@@ -2,6 +2,9 @@ from django.contrib.auth.forms import (
     AuthenticationForm,
 )
 from django import forms
+from budget.models import (
+    Category,
+)
 
 
 class EditUserForm(forms.Form):
@@ -66,3 +69,9 @@ class LoginForm(AuthenticationForm):
             }),
         label='',
     )
+
+
+class AddCategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name']

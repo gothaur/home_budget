@@ -1,9 +1,13 @@
 from django.contrib.auth.models import (
     User,
 )
+from django.utils import (
+    timezone,
+)
 from budget.forms import (
     AddExpenseForm,
     AddIncomeForm,
+    FilterExpensesForm,
 )
 from budget.models import (
     Category,
@@ -26,20 +30,37 @@ def sidebars(request):
 
 def add_entry_form(request):
     expense_form = AddExpenseForm()
-    income_form = AddIncomeForm(
-        initial={
-            'user': request.user.username,
-        }
-    )
-    user = User.objects.get(pk=request.user.id)
-    user_categories = user.profile.categories.order_by('name')
-    all_categories = Category.objects.exclude(
-        name__in=[category.name for category in user_categories]
-    )
+    income_form = AddIncomeForm()
+    user_categories = []
+    all_categories = []
+    try:
+        user = User.objects.get(pk=request.user.id)
+        user_categories = user.profile.categories.order_by('name')
+        all_categories = Category.objects.exclude(
+            name__in=[category.name for category in user_categories]
+        )
+    except:
+        pass
     context = {
         'expense_form': expense_form,
         'income_form': income_form,
         'all_categories': all_categories,
         'user_categories': user_categories,
+    }
+    return context
+
+
+def filter_forms(request):
+    expense_filter_form = FilterExpensesForm()
+
+    context = {
+        'expense_filter_form': expense_filter_form,
+    }
+    return context
+
+
+def date(request):
+    context = {
+        'month': timezone.localdate(),
     }
     return context

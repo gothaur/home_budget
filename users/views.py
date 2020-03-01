@@ -4,12 +4,15 @@ from django.contrib import (
 from django.contrib.auth.forms import (
     UserCreationForm,
 )
-from django.db import (
-    IntegrityError,
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+)
+from django.contrib.auth.models import (
+    User,
 )
 from django.shortcuts import (
-    render,
     redirect,
+    render,
 )
 from django.views import (
     View,
@@ -18,6 +21,7 @@ from budget.models import (
     Category,
 )
 from users.forms import (
+    AddCategoryForm,
     EditUserForm,
 )
 from users.models import (
@@ -32,7 +36,7 @@ class RegisterView(View):
         context = {
             'form': form,
         }
-        return render(request, 'register.html', context)
+        return render(request, 'users/register.html', context)
 
     def post(self, request):
         form = UserCreationForm(request.POST)
@@ -54,7 +58,7 @@ class RegisterView(View):
             }
             return render(
                 request,
-                'register.html',
+                'users/register.html',
                 context,
             )
 
@@ -62,52 +66,51 @@ class RegisterView(View):
 class SettingsView(View):
 
     def get(self, request):
-        user = request.user
+        user = User.objects.get(pk=request.user.id)
         user_form = EditUserForm(initial={
             'username': user.username,
             'first_name': user.first_name,
             'last_name': user.last_name,
             'email': user.email,
         })
+        add_category_form = AddCategoryForm()
         context = {
+            'add_category_form': add_category_form,
             'user': user,
             'user_form': user_form,
         }
-        return render(request, 'settings.html', context)
+        return render(request, 'users/settings.html', context)
 
     def post(self, request):
 
         form_name = request.POST.get('form_name')
 
         if form_name == 'add_category':
-            try:
-                category = Category.objects.get(
-                    name__iexact=request.POST.get('category')
-                )
+            if Category.objects.filter(name__iexact=request.POST.get('name')).exists():
                 messages.add_message(
                     request,
-                    messages.ERROR,
+                    messages.WARNING,
                     "Taka kategoria już istnieje",
                 )
-                return redirect('users:settings')
-            # except IntegrityError, DoesNotExist:
-            except:
-                user = request.user
-                category = Category.objects.create(
-                    name=request.POST.get('category'),
-                    default_category=False)
-                user.profile.categories.add(category)
-                messages.add_message(
-                    request,
-                    messages.SUCCESS,
-                    "Pomyślnie dodano nową kategorię",
-                )
-                return redirect('users:settings')
+            else:
+                user = User.objects.get(pk=request.user.id)
+                add_category_form = AddCategoryForm(request.POST)
+                if add_category_form.is_valid():
+                    category = Category.objects.create(
+                        name=add_category_form.cleaned_data['name'],
+                        default_category=False)
+                    user.profile.categories.add(category)
+                    messages.add_message(
+                        request,
+                        messages.SUCCESS,
+                        "Pomyślnie dodano nową kategorię",
+                    )
+            return redirect('users:settings')
 
         if form_name == 'edit_user':
             user_form = EditUserForm(request.POST)
             if user_form.is_valid():
-                user = request.user
+                user = User.objects.get(pk=request.user.id)
                 user.first_name = user_form.cleaned_data['first_name']
                 user.last_name = user_form.cleaned_data['last_name']
                 user.email = user_form.cleaned_data['email']
@@ -118,4 +121,20 @@ class SettingsView(View):
                     "Pomyślnie zmieniono dane",
                 )
 
+        return redirect('users:settings')
+
+
+class SignOutCategory(LoginRequiredMixin, View):
+
+    def post(self, request, category_id):
+        user = User.objects.get(pk=request.user.id)
+        user.profile.categories.remove(Category.objects.get(pk=category_id))
+        return redirect('users:settings')
+
+
+class SignInCategory(LoginRequiredMixin, View):
+
+    def post(self, request, category_id):
+        user = User.objects.get(pk=request.user.id)
+        user.profile.categories.add(Category.objects.get(pk=category_id))
         return redirect('users:settings')
