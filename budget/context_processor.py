@@ -64,3 +64,10 @@ def date(request):
         'month': timezone.localdate(),
     }
     return context
+
+
+def version(request):
+    context = {
+        'version': '0.9 beta',
+    }
+    return context
