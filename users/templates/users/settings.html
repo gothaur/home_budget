@@ -30,13 +30,13 @@
           </form>
         </div>
       </div>
-      <div class="card text-center mx-auto mb-3" style="width: 26rem">
-        <div class="card-header text-center">
-          Usuń kategorię
-        </div>
-        <div class="card-body">
-          <form class="form-group" name="LoginForm" method="post">
-            {% csrf_token %}
+{#      <div class="card text-center mx-auto mb-3" style="width: 26rem">#}
+{#        <div class="card-header text-center">#}
+{#          Usuń kategorię#}
+{#        </div>#}
+{#        <div class="card-body">#}
+{#          <form class="form-group" name="LoginForm" method="post">#}
+{#            {% csrf_token %}#}
             {#            {% if next %}#}
             {#              <input type="hidden" name="next" value="{{ next }}" />#}
             {#            {% endif %}#}
@@ -44,11 +44,11 @@
             {#            <div class="form-group">#}
             {#              <input class="form-control" type="text" id="category" name="category"  placeholder="Kategoria">#}
             {#            </div>#}
-            {{ add_category_form }}
-            <button type="submit" class="btn btn-primary form-control">Usuń</button>
-          </form>
-        </div>
-      </div>
+{#            {{ add_category_form }}#}
+{#            <button type="submit" class="btn btn-primary form-control">Usuń</button>#}
+{#          </form>#}
+{#        </div>#}
+{#      </div>#}
     </div>
     <div class="col-sm-6">
       <div class="card text-center bg-light mx-auto mb-3" style="width: 26rem">
@@ -77,21 +77,3 @@
     </div>
   </div>
 {% endblock %}
-
-<div class="card text-center">
-  <div class="card-header">
-    <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item">
-        <a class="nav-link active" href="user">Użytkownik</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="app">Ustawienia Aplikacji</a>
-      </li>
-    </ul>
-  </div>
-  <div class="card-body">
-    <h5 class="card-title">Special title treatment</h5>
-    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
-  </div>
-</div>

@@ -17,6 +17,9 @@ from django.shortcuts import (
 from django.views import (
     View,
 )
+from django.views.generic import (
+    TemplateView,
+)
 from budget.models import (
     Category,
 )
@@ -138,3 +141,7 @@ class SignInCategory(LoginRequiredMixin, View):
         user = User.objects.get(pk=request.user.id)
         user.profile.categories.add(Category.objects.get(pk=category_id))
         return redirect('users:settings')
+
+
+class StatuteView(TemplateView):
+    template_name = 'users/statute.html'

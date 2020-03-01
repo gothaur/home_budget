@@ -19,7 +19,7 @@ class Category(models.Model):
 
 class Income(models.Model):
     date = models.DateField()
-    amount = models.DecimalField(max_digits=8, decimal_places=2)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
     comment = models.CharField(max_length=255)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -27,6 +27,6 @@ class Income(models.Model):
 class Expenses(models.Model):
     date = models.DateField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=8, decimal_places=2)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
     comment = models.CharField(max_length=255)
     user = models.ForeignKey(User, on_delete=models.CASCADE)

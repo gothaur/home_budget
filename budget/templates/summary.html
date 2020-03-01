@@ -25,10 +25,10 @@
         <tr>
           <td>{{ total_income }}</td>
           <td>{{ total_expenses }}</td>
-          {% if total_savings < 0 %}
-            <td style="color: red">{{ total_savings }}</td>
+          {% if savings < 0 %}
+            <td style="color: red">{{ savings }}</td>
           {% else %}
-            <td style="color: green">{{ total_savings }}</td>
+            <td style="color: green">{{ savings }}</td>
           {% endif %}
         </tr>
         </tbody>
@@ -51,10 +51,32 @@
           <tr>
             <td>{{ categories|index:forloop.counter0 }}</td>
             {% for counter in res|entry_num_array %}
-              <td>{{res|index:counter}}</td>
+              <td style="text-align: right">{{res|index:counter}}</td>
             {% endfor %}
           </tr>
         {% endfor %}
+        <tr class="table-secondary">
+          <th>Wydatki</th>
+          {% for month in monthly_expenses %}
+            <td style="text-align: right">{{ month }}</td>
+          {% endfor %}
+        </tr>
+        <tr class="table-info">
+          <th>Przychód</th>
+          {% for month in monthly_income %}
+            <td style="text-align: right">{{ month }}</td>
+          {% endfor %}
+        </tr>
+        <tr class="table-secondary">
+          <th style="text-align: right">&Sigma;</th>
+          {% for s in sigma %}
+            {% if s < 0 %}
+              <td style="color: red; text-align: right">{{ s }}</td>
+            {% else %}
+              <td style="color: green; text-align: right">{{ s }}</td>
+            {% endif %}
+          {% endfor %}
+        </tr>
         </tbody>
       </table>
     </div>

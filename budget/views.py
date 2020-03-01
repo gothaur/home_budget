@@ -78,7 +78,6 @@ class ExpensesView(LoginRequiredMixin, View):
         return render(request, 'expenses.html', context)
 
     def post(self, request):
-
         form = AddExpenseForm(
             request.POST,
         )
@@ -125,7 +124,12 @@ class Summary(LoginRequiredMixin, View):
         date_to = request.GET.get("date_to", timezone.localdate())
         total_income = sum([income.amount for income in data_filter(request, Income, date_from, date_to)])
         total_expenses = sum([expense.amount for expense in data_filter(request, Expenses, date_from, date_to)])
-        total_savings = total_income - total_expenses
+        savings = total_income - total_expenses
+        total_savings = sum(
+            [income.amount for income in Income.objects.filter(user_id=request.user.id)]
+        ) - sum(
+            [expense.amount for expense in Expenses.objects.filter(user_id=request.user.id)]
+        )
 
         months = get_month_names()
         user = User.objects.get(pk=request.user.id)
@@ -142,24 +146,34 @@ class Summary(LoginRequiredMixin, View):
                     monthly_amount += expense.amount
                 result[i].append(monthly_amount)
 
+        monthly_income = []
+        monthly_expenses = []
+        sigma = []
+
+        for month in range(1, 13):
+            monthly_income.append(sum([income.amount for income in Income.objects.filter(user_id=request.user.id)
+                                      .filter(date__year=timezone.now().year)
+                                      .filter(date__month=month)]))
+            monthly_expenses.append(sum([expense.amount for expense in Expenses.objects.filter(user_id=request.user.id)
+                                        .filter(date__year=timezone.now().year)
+                                        .filter(date__month=month)]))
+            sigma.append(monthly_income[month - 1] - monthly_expenses[month - 1])
+
         context = {
             'total_income': total_income,
             'total_expenses': total_expenses,
-            'total_savings': total_savings,
+            'savings': savings,
             'months': months,
             'categories': categories,
             'result': result,
             'date_from': date_from,
             'date_to': date_to,
+            'monthly_income': monthly_income,
+            'monthly_expenses': monthly_expenses,
+            'total_savings': total_savings,
+            'sigma': sigma,
         }
         return render(request, 'summary.html', context)
-
-
-class DeleteExpense(LoginRequiredMixin, View):
-
-    def post(self, request, expense_id):
-        Expenses.objects.get(pk=expense_id).delete()
-        return redirect('expenses')
 
 
 class DeleteExpenseView(LoginRequiredMixin, DeleteView):

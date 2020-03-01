@@ -7,6 +7,7 @@ from users.views import (
     SettingsView,
     SignInCategory,
     SignOutCategory,
+    StatuteView,
 )
 from users.forms import (
     LoginForm,
@@ -31,4 +32,5 @@ urlpatterns = [
     path('edit/', SettingsView.as_view(), name='settings'),
     path('category/delete/<int:category_id>/', SignOutCategory.as_view(), name='signout-category'),
     path('category/add/<int:category_id>/', SignInCategory.as_view(), name='signin-category'),
+    path('statute/', StatuteView.as_view(), name='statute'),
 ]

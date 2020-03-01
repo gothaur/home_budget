@@ -10,6 +10,7 @@
       {% else %}
         Okres: {{ date_from }} - {{ date_to }}
       {% endif %}
+      <div style="text-align: right">Przychody</div>
     </div>
     <div class="card-body">
       <table class="table table-borderless table-hover">
@@ -25,7 +26,7 @@
         {% for income in incomes %}
           <tr>
             <td>{{ income.date|date:"SHORT_DATE_FORMAT" }}</td>
-            <td>{{ income.amount }}</td>
+            <td style="text-align: right">{{ income.amount }}</td>
             <td>{{ income.comment }}</td>
             <td>
               <form action="{% url 'delete-income' income.id %}" method="post">
