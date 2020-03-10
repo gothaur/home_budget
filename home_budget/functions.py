@@ -8,24 +8,32 @@ def data_filter(request, model, date_from, date_to, selected_category="-1",
                 month=timezone.now().month, year=timezone.now().year):
 
     if date_from == timezone.localdate() or date_from == "":
-        date_from = datetime.date(year=year,
-                                  month=month,
-                                  day=1)
+        date_from = datetime.date(
+            year=year,
+            month=month,
+            day=1,
+        )
 
     if date_to == timezone.localdate() or date_to == "":
-        date_to = datetime.date(year=year,
-                                month=month,
-                                day=calendar.monthrange(year, month)[1])
+        date_to = datetime.date(
+            year=year,
+            month=month,
+            day=calendar.monthrange(year, month)[1],
+        )
 
     if selected_category == "-1":
-        return model.objects.filter(user=request.user) \
-            .filter(date__gte=date_from) \
-            .filter(date__lte=date_to).order_by('-date')
+        return model.objects.filter(
+            user=request.user,
+            date__gte=date_from,
+            date__lte=date_to,
+        ).order_by('-date')
     else:
-        return model.objects.filter(user=request.user) \
-            .filter(date__gte=date_from) \
-            .filter(date__lte=date_to) \
-            .filter(category=selected_category).order_by('-date')
+        return model.objects.filter(
+            user=request.user,
+            date__gte=date_from,
+            date__lte=date_to,
+            category=selected_category
+        ).order_by('-date')
 
 
 def get_month_names():

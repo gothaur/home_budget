@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.contrib.auth import (
     authenticate,
     login,
@@ -9,6 +7,9 @@ from django.contrib.auth.mixins import (
 )
 from django.contrib.auth.models import (
     User,
+)
+from django.db.models import (
+    Sum,
 )
 from django.shortcuts import (
     redirect,
@@ -30,7 +31,6 @@ from home_budget.functions import (
 )
 from budget.forms import (
     AddExpenseForm,
-    FilterExpensesForm,
 )
 from budget.models import (
     Expenses,
@@ -122,14 +122,11 @@ class Summary(LoginRequiredMixin, View):
     def get(self, request):
         date_from = request.GET.get("date_from", timezone.localdate())
         date_to = request.GET.get("date_to", timezone.localdate())
-        total_income = sum([income.amount for income in data_filter(request, Income, date_from, date_to)])
-        total_expenses = sum([expense.amount for expense in data_filter(request, Expenses, date_from, date_to)])
+        total_income = data_filter(request, Income, date_from, date_to).aggregate(Sum('amount'))['amount__sum']
+        total_expenses = data_filter(request, Expenses, date_from, date_to).aggregate(Sum('amount'))['amount__sum']
         savings = total_income - total_expenses
-        total_savings = sum(
-            [income.amount for income in Income.objects.filter(user_id=request.user.id)]
-        ) - sum(
-            [expense.amount for expense in Expenses.objects.filter(user_id=request.user.id)]
-        )
+        total_savings = Income.objects.filter(user_id=request.user.id).aggregate(Sum('amount'))['amount__sum'] - \
+                        Expenses.objects.filter(user_id=request.user.id).aggregate(Sum('amount'))['amount__sum']
 
         months = get_month_names()
         user = User.objects.get(pk=request.user.id)
@@ -140,23 +137,28 @@ class Summary(LoginRequiredMixin, View):
         for i, category in enumerate(categories):
             result.append([])
             for month in range(1, 13):
-                monthly_amount = 0
-                for expense in Expenses.objects.filter(user=request.user).filter(category__name=category) \
-                        .filter(date__year=timezone.now().year).filter(date__month=month):
-                    monthly_amount += expense.amount
-                result[i].append(monthly_amount)
+                monthly_amount = Expenses.objects.filter(
+                    user=request.user,
+                    category__name=category,
+                    date__year=timezone.now().year,
+                    date__month=month,
+                ).aggregate(Sum('amount'))
+                result[i].append(monthly_amount['amount__sum'] if monthly_amount['amount__sum'] is not None else 0)
 
         monthly_income = []
-        monthly_expenses = []
+        monthly_expenses = [sum(r) for r in result]
         sigma = []
 
         for month in range(1, 13):
-            monthly_income.append(sum([income.amount for income in Income.objects.filter(user_id=request.user.id)
-                                      .filter(date__year=timezone.now().year)
-                                      .filter(date__month=month)]))
-            monthly_expenses.append(sum([expense.amount for expense in Expenses.objects.filter(user_id=request.user.id)
-                                        .filter(date__year=timezone.now().year)
-                                        .filter(date__month=month)]))
+            income = Income.objects.filter(
+                user_id=request.user.id,
+                date__year=timezone.now().year,
+                date__month=month,
+            ).aggregate(Sum('amount'))['amount__sum']
+            monthly_income.append(
+                income if income is not None else 0
+            )
+
             sigma.append(monthly_income[month - 1] - monthly_expenses[month - 1])
 
         context = {
