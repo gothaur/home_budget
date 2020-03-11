@@ -1,6 +1,8 @@
 # Home budget
-This internet app helps you to keep track of your expenses and incomes. 
+This internet app helps you to keep track of your expenses and incomes.
+
 url: ```https://zaplanuj-budzet.herokuapp.com/```
+
 ![Summary 1](/screenshots/summary_2.png)
 Summary view
 
