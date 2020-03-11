@@ -1,5 +1,10 @@
 # Home budget
 This internet app helps you to keep track of your expenses and incomes. 
+![Summary](/screenshots/summary_1.png)
+![Summary](/screenshots/summary_2.png)
+![Income](/screenshots/income.png)
+![Expenses](/screenshots/expenses.png)
+![Settings](/screenshots/settings.png)
 
 ## Getting Started
 
