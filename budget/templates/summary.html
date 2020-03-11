@@ -55,7 +55,7 @@
             {% endfor %}
           </tr>
         {% endfor %}
-        <tr class="table-secondary">
+        {% comment %} <tr class="table-secondary">
           <th>Wydatki</th>
           {% for month in monthly_expenses %}
             <td style="text-align: right">{{ month }}</td>
@@ -75,6 +75,16 @@
             {% else %}
               <td style="color: green; text-align: right">{{ s }}</td>
             {% endif %}
+          {% endfor %}
+        </tr> {% endcomment %}
+        <tr class="table-secondary">
+          <th>Wydatki</th>
+          {% for expense, income, sigma in summary %}
+          <tr>
+            <td style="text-align: right">{{ expense }}</td>
+            </tr>
+            <td style="text-align: right">{{ income }}</td>
+            <td style="text-align: right">{{ sigma }}</td>
           {% endfor %}
         </tr>
         </tbody>

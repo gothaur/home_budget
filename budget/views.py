@@ -43,8 +43,8 @@ class Index(View):
     def get(self, request):
         if not request.user.is_authenticated:
             return redirect('users:login')
-        else:
-            return redirect('expenses')
+
+        return redirect('expenses')
 
     def post(self, request):
 
@@ -120,17 +120,34 @@ class IncomeView(LoginRequiredMixin, View):
 class Summary(LoginRequiredMixin, View):
 
     def get(self, request):
+        user = User.objects.get(pk=request.user.id)
         date_from = request.GET.get("date_from", timezone.localdate())
         date_to = request.GET.get("date_to", timezone.localdate())
-        total_income = data_filter(request, Income, date_from, date_to).aggregate(Sum('amount'))['amount__sum']
-        total_expenses = data_filter(request, Expenses, date_from, date_to).aggregate(Sum('amount'))['amount__sum']
+        total_income = data_filter(
+            request,
+            Income,
+            date_from,
+            date_to,
+        ).aggregate(Sum('amount'))['amount__sum']
+        total_income = total_income if total_income is not None else 0
+        total_expenses = data_filter(
+            request,
+            Expenses,
+            date_from,
+            date_to,
+        ).aggregate(Sum('amount'))['amount__sum']
+        total_expenses = total_expenses if total_expenses is not None else 0
         savings = total_income - total_expenses
-        total_savings = Income.objects.filter(user_id=request.user.id).aggregate(Sum('amount'))['amount__sum'] - \
-                        Expenses.objects.filter(user_id=request.user.id).aggregate(Sum('amount'))['amount__sum']
+        total_savings = Income.objects.filter(
+            user_id=user.id,
+            ).aggregate(Sum('amount'))['amount__sum'] - \
+                        Expenses.objects.filter(
+                            user_id=user.id,
+                        ).aggregate(Sum('amount'))['amount__sum']
 
         months = get_month_names()
-        user = User.objects.get(pk=request.user.id)
-        categories = [category.name for category in user.profile.categories.order_by('name')]
+        categories = user.profile.categories.order_by('name')
+        print(categories)
 
         result = []
 
@@ -139,11 +156,10 @@ class Summary(LoginRequiredMixin, View):
             for month in range(1, 13):
                 monthly_amount = Expenses.objects.filter(
                     user=request.user,
-                    category__name=category,
+                    category__name=category.name,
                     date__year=timezone.now().year,
-                    date__month=month,
-                ).aggregate(Sum('amount'))
-                result[i].append(monthly_amount['amount__sum'] if monthly_amount['amount__sum'] is not None else 0)
+                    date__month=month).aggregate(Sum('amount'))['amount__sum']
+                result[i].append(monthly_amount if monthly_amount is not None else 0)
 
         monthly_income = []
         monthly_expenses = [sum(r) for r in result]
@@ -151,7 +167,7 @@ class Summary(LoginRequiredMixin, View):
 
         for month in range(1, 13):
             income = Income.objects.filter(
-                user_id=request.user.id,
+                user_id=user.id,
                 date__year=timezone.now().year,
                 date__month=month,
             ).aggregate(Sum('amount'))['amount__sum']
@@ -179,6 +195,9 @@ class Summary(LoginRequiredMixin, View):
 
 
 class DeleteExpenseView(LoginRequiredMixin, DeleteView):
+    """
+    delete expense from list
+    """
     http_method_names = ['post']
     model = Expenses
     pk_url_kwarg = 'expense_id'
@@ -186,6 +205,9 @@ class DeleteExpenseView(LoginRequiredMixin, DeleteView):
 
 
 class DeleteIncomeView(LoginRequiredMixin, DeleteView):
+    """
+    delete income from list
+    """
     http_method_names = ['post']
     model = Income
     pk_url_kwarg = 'income_id'
