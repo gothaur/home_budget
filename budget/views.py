@@ -88,8 +88,13 @@ class ExpensesView(LoginRequiredMixin, View):
             amount = form.cleaned_data['amount']
             comment = form.cleaned_data['comment']
 
-            Expenses.objects.create(date=date, category=category,
-                                    amount=amount, comment=comment, user=request.user)
+            Expenses.objects.create(
+                date=date,
+                category=category,
+                amount=amount,
+                comment=comment,
+                user=request.user
+            )
 
         return redirect('expenses')
 
@@ -140,14 +145,15 @@ class Summary(LoginRequiredMixin, View):
         savings = total_income - total_expenses
         total_savings = Income.objects.filter(
             user_id=user.id,
-            ).aggregate(Sum('amount'))['amount__sum'] - \
-                        Expenses.objects.filter(
-                            user_id=user.id,
-                        ).aggregate(Sum('amount'))['amount__sum']
+        ).aggregate(
+            Sum('amount'))['amount__sum'] - Expenses.objects.filter(
+            user_id=user.id,
+        ).aggregate(
+            Sum('amount')
+        )['amount__sum']
 
         months = get_month_names()
         categories = user.profile.categories.order_by('name')
-        print(categories)
 
         result = []
 

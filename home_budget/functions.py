@@ -22,11 +22,8 @@ def data_filter(request, model, date_from, date_to, selected_category="-1",
         )
 
     if selected_category == "-1":
-        return model.objects.filter(
-            user=request.user,
-            date__gte=date_from,
-            date__lte=date_to,
-        ).order_by('-date')
+        result = model.objects.filter(user=request.user, date__gte=date_from, date__lte=date_to).order_by('-date')
+        return result
     else:
         return model.objects.filter(
             user=request.user,

@@ -13,7 +13,7 @@
       <div style="text-align: right">Przychody</div>
     </div>
     <div class="card-body">
-      <table class="table table-borderless table-hover">
+      <table class="table table-borderless table-hover table-responsive">
         <thead class="thead-dark">
         <tr>
           <th style="width: 13%">Data</th>
@@ -32,8 +32,7 @@
               <form action="{% url 'delete-income' income.id %}" method="post">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-link btn-sm">
-                  {% load static %}
-                  <img src="{% static "budget/delete-sign.png" %}" alt="del">
+                  <img src="https://img.icons8.com/officexs/16/000000/delete-sign.png" alt="del">
                 </button>
               </form>
             </td>
