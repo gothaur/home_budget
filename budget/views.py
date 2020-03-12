@@ -134,23 +134,26 @@ class Summary(LoginRequiredMixin, View):
             date_from,
             date_to,
         ).aggregate(Sum('amount'))['amount__sum']
-        total_income = total_income if total_income is not None else 0
+        total_income = total_income or 0
         total_expenses = data_filter(
             request,
             Expenses,
             date_from,
             date_to,
         ).aggregate(Sum('amount'))['amount__sum']
-        total_expenses = total_expenses if total_expenses is not None else 0
+        total_expenses = total_expenses or 0
         savings = total_income - total_expenses
-        total_savings = Income.objects.filter(
-            user_id=user.id,
-        ).aggregate(
-            Sum('amount'))['amount__sum'] - Expenses.objects.filter(
+        income = Income.objects.filter(
             user_id=user.id,
         ).aggregate(
             Sum('amount')
-        )['amount__sum']
+        )['amount__sum'] or 0
+        expenses = Expenses.objects.filter(
+            user_id=user.id,
+        ).aggregate(
+            Sum('amount')
+        )['amount__sum'] or 0
+        total_savings = income - expenses
 
         months = get_month_names()
         categories = user.profile.categories.order_by('name')
@@ -168,7 +171,7 @@ class Summary(LoginRequiredMixin, View):
                 result[i].append(monthly_amount if monthly_amount is not None else 0)
 
         monthly_income = []
-        monthly_expenses = [sum(r) for r in result]
+        monthly_expenses = []
         sigma = []
 
         for month in range(1, 13):
@@ -179,6 +182,14 @@ class Summary(LoginRequiredMixin, View):
             ).aggregate(Sum('amount'))['amount__sum']
             monthly_income.append(
                 income if income is not None else 0
+            )
+            expense = Expenses.objects.filter(
+                user_id=user.id,
+                date__year=timezone.now().year,
+                date__month=month,
+            ).aggregate(Sum('amount'))['amount__sum']
+            monthly_expenses.append(
+                expense if expense is not None else 0
             )
 
             sigma.append(monthly_income[month - 1] - monthly_expenses[month - 1])

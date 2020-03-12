@@ -1,0 +1,8 @@
+{% extends '__base_view__.html' %}
+{% block body %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Usuń">
+  </form>
+{% endblock %}

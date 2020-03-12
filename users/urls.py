@@ -1,7 +1,11 @@
+from django.contrib.auth.models import User
 from django.urls import (
     path,
-)
+    reverse_lazy)
 from django.contrib.auth import views as auth_views
+from django.views.generic import (
+    DeleteView,
+)
 from users.views import (
     RegisterView,
     SettingsView,
@@ -33,4 +37,16 @@ urlpatterns = [
     path('category/delete/<int:category_id>/', SignOutCategory.as_view(), name='signout-category'),
     path('category/add/<int:category_id>/', SignInCategory.as_view(), name='signin-category'),
     path('statute/', StatuteView.as_view(), name='statute'),
+    path(
+        'delete/<int:user_id>',
+        DeleteView.as_view(
+            template_name='users/delete.html',
+            model=User,
+            pk_url_kwarg='user_id',
+            success_url=reverse_lazy(
+                'users:register',
+            ),
+        ),
+        name='delete-user',
+    ),
 ]
