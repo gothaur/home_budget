@@ -1,14 +1,15 @@
 from django.contrib import (
     messages,
 )
-from django.contrib.auth.forms import (
-    UserCreationForm,
+from django.contrib.auth import (
+    get_user_model,
 )
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
 )
-from django.contrib.auth.models import (
-    User,
+from django.urls import reverse_lazy
+from django.views.generic import (
+    CreateView,
 )
 from django.shortcuts import (
     redirect,
@@ -26,44 +27,52 @@ from budget.models import (
 from users.forms import (
     AddCategoryForm,
     EditUserForm,
+    CustomUserCreationForm
 )
-from users.models import (
-    Profile,
-)
+User = get_user_model()
 
 
-class RegisterView(View):
+# class RegisterView(View):
+#
+#     def get(self, request):
+#         form = CustomUserCreationForm()
+#         context = {
+#             'form': form,
+#         }
+#         return render(request, 'users/register.html', context)
+#
+#     def post(self, request):
+#         form = CustomUserCreationForm(request.POST)
+#
+#         if form.is_valid():
+#             categories = Category.objects.filter(
+#                 default_category=True,
+#             )
+#             user = form.save()
+#             user.categories.set(categories)
+#             return redirect('users:login')
+#         else:
+#             context = {
+#                 'form': form,
+#             }
+#             return render(
+#                 request,
+#                 'users/register.html',
+#                 context,
+#             )
 
-    def get(self, request):
-        form = UserCreationForm()
-        context = {
-            'form': form,
-        }
-        return render(request, 'users/register.html', context)
 
-    def post(self, request):
-        form = UserCreationForm(request.POST)
+class RegisterView(CreateView):
+    form_class = CustomUserCreationForm
+    success_url = reverse_lazy('users:login')
+    template_name = 'users/register.html'
 
-        if form.is_valid():
-            categories = Category.objects.filter(
-                default_category=True,
-            )
-            user = form.save()
-            profile = Profile(
-                user=user,
-            )
-            profile.save()
-            profile.categories.set(categories)
-            return redirect('users:login')
-        else:
-            context = {
-                'form': form,
-            }
-            return render(
-                request,
-                'users/register.html',
-                context,
-            )
+    def form_valid(self, form):
+        user = form.save()
+        categories = Category.objects.filter(default_category=True)
+        user.categories.set(categories)
+        user.save()
+        return super().form_valid(form)
 
 
 class SettingsView(View):
@@ -102,7 +111,7 @@ class SettingsView(View):
                     category = Category.objects.create(
                         name=add_category_form.cleaned_data['name'],
                         default_category=False)
-                    user.profile.categories.add(category)
+                    user.categories.add(category)
                     messages.add_message(
                         request,
                         messages.SUCCESS,
@@ -131,7 +140,7 @@ class SignOutCategory(LoginRequiredMixin, View):
 
     def post(self, request, category_id):
         user = User.objects.get(pk=request.user.id)
-        user.profile.categories.remove(Category.objects.get(pk=category_id))
+        user.categories.remove(Category.objects.get(pk=category_id))
         return redirect('users:settings')
 
 
@@ -139,7 +148,7 @@ class SignInCategory(LoginRequiredMixin, View):
 
     def post(self, request, category_id):
         user = User.objects.get(pk=request.user.id)
-        user.profile.categories.add(Category.objects.get(pk=category_id))
+        user.categories.add(Category.objects.get(pk=category_id))
         return redirect('users:settings')
 
 

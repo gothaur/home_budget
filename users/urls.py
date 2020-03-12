@@ -1,4 +1,6 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import (
+    get_user_model,
+)
 from django.urls import (
     path,
     reverse_lazy)
@@ -41,7 +43,7 @@ urlpatterns = [
         'delete/<int:user_id>',
         DeleteView.as_view(
             template_name='users/delete.html',
-            model=User,
+            model=get_user_model(),
             pk_url_kwarg='user_id',
             success_url=reverse_lazy(
                 'users:register',

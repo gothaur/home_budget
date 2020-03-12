@@ -1,12 +1,10 @@
 from django.contrib.auth import (
     authenticate,
+    get_user_model,
     login,
 )
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
-)
-from django.contrib.auth.models import (
-    User,
 )
 from django.db.models import (
     Sum,
@@ -36,6 +34,7 @@ from budget.models import (
     Expenses,
     Income,
 )
+User = get_user_model()
 
 
 class Index(View):
@@ -66,7 +65,7 @@ class ExpensesView(LoginRequiredMixin, View):
         expenses = data_filter(request, Expenses, date_from, date_to, selected_category)
 
         user = User.objects.get(pk=request.user.id)
-        categories = user.profile.categories.order_by('name')
+        categories = user.categories.order_by('name')
 
         context = {
             'categories': categories,
@@ -156,7 +155,7 @@ class Summary(LoginRequiredMixin, View):
         total_savings = income - expenses
 
         months = get_month_names()
-        categories = user.profile.categories.order_by('name')
+        categories = user.categories.order_by('name')
 
         result = []
 

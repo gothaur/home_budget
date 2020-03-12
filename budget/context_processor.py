@@ -1,5 +1,5 @@
-from django.contrib.auth.models import (
-    User,
+from django.contrib.auth import (
+    get_user_model,
 )
 from django.utils import (
     timezone,
@@ -12,6 +12,7 @@ from budget.forms import (
 from budget.models import (
     Category,
 )
+User = get_user_model()
 
 
 def sidebars(request):
@@ -35,12 +36,12 @@ def add_entry_form(request):
     all_categories = []
     try:
         user = User.objects.get(pk=request.user.id)
-        user_categories = user.profile.categories.order_by('name')
+        user_categories = user.categories.order_by('name')
         all_categories = Category.objects.exclude(
             name__in=[category.name for category in user_categories]
         )
     except:
-        pass
+        print('nastapil jakis blad')
     context = {
         'expense_form': expense_form,
         'income_form': income_form,
