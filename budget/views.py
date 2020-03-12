@@ -22,6 +22,7 @@ from django.views import (
 )
 from django.views.generic import (
     DeleteView,
+    UpdateView,
 )
 from home_budget.functions import (
     data_filter,
@@ -225,6 +226,13 @@ class DeleteIncomeView(LoginRequiredMixin, DeleteView):
     delete income from list
     """
     http_method_names = ['post']
+    model = Income
+    pk_url_kwarg = 'income_id'
+    success_url = reverse_lazy('income')
+
+
+class EditIncomeView(LoginRequiredMixin, UpdateView):
+    template_name = 'edit-income.html'
     model = Income
     pk_url_kwarg = 'income_id'
     success_url = reverse_lazy('income')
