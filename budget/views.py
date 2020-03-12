@@ -41,7 +41,7 @@ class Index(View):
 
     def get(self, request):
         if not request.user.is_authenticated:
-            return redirect('users:login')
+            return redirect('auth_ex:login')
 
         return redirect('expenses')
 
@@ -50,10 +50,10 @@ class Index(View):
         user = authenticate(username=request.POST['username'], password=request.POST['password'])
         if user is not None:
             login(request, user)
-            request.session['username'] = user.username
+            # request.session['username'] = user.username
             return redirect('summary')
 
-        return redirect('users:login')
+        return redirect('auth_ex:login')
 
 
 class ExpensesView(LoginRequiredMixin, View):

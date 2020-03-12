@@ -34,7 +34,7 @@
       </li>
       {% if not user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'users:register' %}">Zarejestruj</a>
+          <a class="nav-link" href="{% url 'auth_ex:register' %}">Zarejestruj</a>
         </li>
       {% else %}
         <li class="nav-item text-right dropdown">
@@ -42,10 +42,10 @@
             {{ user.get_username }}
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="{% url 'users:statute' %}">Regulamin</a>
-            <a class="dropdown-item" href="{% url 'users:settings' %}">Ustawienia</a>
+            <a class="dropdown-item" href="{% url 'auth_ex:statute' %}">Regulamin</a>
+            <a class="dropdown-item" href="{% url 'auth_ex:settings' %}">Ustawienia</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'users:logout' %}">Wyloguj</a>
+            <a class="dropdown-item" href="{% url 'auth_ex:logout' %}">Wyloguj</a>
           </div>
         </li>
       {% endif %}
@@ -112,7 +112,7 @@
                 <tr>
                   <td style="width: 90%; text-align: left">{{ category.name }}</td>
                   <td style="width: 10%; text-align: right">
-                    <form action="{% url 'users:signin-category' category.id %}" method="post">
+                    <form action="{% url 'auth_ex:signin-category' category.id %}" method="post">
                       {% csrf_token %}
                       <input type="hidden" name="form_name" value="sign_up_category">
                       <button type='submit' class="btn btn-link btn-sm">
@@ -178,7 +178,7 @@
                 <tr>
                   <td style="width: 90%; text-align: left">{{ category.name }}</td>
                   <td style="width: 10%; text-align: right">
-                    <form action="{% url 'users:signout-category' category.id %}" method="post">
+                    <form action="{% url 'auth_ex:signout-category' category.id %}" method="post">
                       {% csrf_token %}
                       <input type="hidden" name="form_name" value="sign_out_category">
                       <button type='submit' class="btn btn-link btn-sm">

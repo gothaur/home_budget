@@ -8,31 +8,31 @@ from django.contrib.auth import views as auth_views
 from django.views.generic import (
     DeleteView,
 )
-from users.views import (
+from auth_ex.views import (
     RegisterView,
     SettingsView,
     SignInCategory,
     SignOutCategory,
     StatuteView,
 )
-from users.forms import (
+from auth_ex.forms import (
     LoginForm,
 )
 
-app_name = 'users'
+app_name = 'auth_ex'
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('login/',
          auth_views.LoginView.as_view(
-             template_name='users/login.html',
+             template_name='auth_ex/login.html',
              authentication_form=LoginForm,
              redirect_authenticated_user=False,),
          name='login'
          ),
     path('logout/',
          auth_views.LogoutView.as_view(
-             template_name='users/logout.html',
+             template_name='auth_ex/logout.html',
          ),
          name='logout'),
     path('edit/', SettingsView.as_view(), name='settings'),
@@ -42,11 +42,11 @@ urlpatterns = [
     path(
         'delete/<int:user_id>',
         DeleteView.as_view(
-            template_name='users/delete.html',
+            template_name='auth_ex/delete.html',
             model=get_user_model(),
             pk_url_kwarg='user_id',
             success_url=reverse_lazy(
-                'users:register',
+                'auth_ex:register',
             ),
         ),
         name='delete-user',

@@ -30,5 +30,5 @@ urlpatterns = [
     path('income/', views.IncomeView.as_view(), name='income'),
     path('income/delete/<int:income_id>/', views.DeleteIncomeView.as_view(), name='delete-income'),
     path('summary/', views.Summary.as_view(), name='summary'),
-    path('users/', include('users.urls',  namespace='users'),),
+    path('users/', include('auth_ex.urls',  namespace='auth_ex'),),
 ]

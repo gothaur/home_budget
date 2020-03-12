@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'budget',
     'rest_framework',
     'api',
-    'users',
     'auth_ex',
 ]
 
@@ -98,7 +97,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_URL = reverse_lazy('users:login')
+LOGIN_URL = reverse_lazy('auth_ex:login')
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 
 # Internationalization
