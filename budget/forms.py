@@ -6,20 +6,61 @@ from budget.models import (
 )
 
 
-class AddExpenseForm(forms.Form):
+# class AddExpenseForm(forms.Form):
+#     date = forms.DateField()
+#     amount = forms.DecimalField(
+#         decimal_places=2,
+#         max_digits=10,
+#     )
+#     category = forms.ModelChoiceField(
+#         queryset=Category.objects.order_by('name'),
+#     )
+#     comment = forms.CharField(
+#         required=False,
+#         max_length=255,
+#         label='Komentarz',
+#     )
+
+
+class AddExpenseForm(forms.ModelForm):
     date = forms.DateField()
     amount = forms.DecimalField(
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control mb-2 mr-sm-2',
+            }
+        ),
         decimal_places=2,
         max_digits=10,
     )
     category = forms.ModelChoiceField(
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control mb-2 mr-sm-2',
+            },
+        ),
         queryset=Category.objects.order_by('name'),
     )
     comment = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                'class': 'form-control mb-2 mr-sm-2',
+                'rows': 2,
+            }
+        ),
         required=False,
         max_length=255,
         label='Komentarz',
     )
+
+    class Meta:
+        model = Income
+        fields = [
+            'date',
+            'amount',
+            'category',
+            'comment',
+        ]
 
 
 # class AddIncomeForm(forms.Form):

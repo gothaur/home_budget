@@ -29,18 +29,19 @@
             <td style="text-align: right">{{ income.amount }}</td>
             <td>{{ income.comment }}</td>
             <td>
-              <form action="{% url 'edit-income' income.id %}" method "post">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-link btn-sm">
-                  edit
-                </button>
-              </form>
-              <form action="{% url 'delete-income' income.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-link btn-sm">
-                  <img src="https://img.icons8.com/officexs/16/000000/delete-sign.png" alt="del">
-                </button>
-              </form>
+              <div class="btn-group btn-group-sm" role="group">
+                <a type="button" href="{% url 'edit-income' income.id %}" >
+                  <button type="button" class="btn btn-link btn-sm">
+                    <img src="https://img.icons8.com/material-sharp/16/000000/edit.png" alt="edit"/>
+                  </button>
+                </a>
+                <form action="{% url 'delete-income' income.id %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-link btn-sm">
+                    <img src="https://img.icons8.com/color/16/000000/delete-forever.png" alt="del"/>
+                  </button>
+                </form>
+              </div>
             </td>
           </tr>
         {% endfor %}

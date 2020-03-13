@@ -238,3 +238,11 @@ class EditIncomeView(LoginRequiredMixin, UpdateView):
     pk_url_kwarg = 'income_id'
     success_url = reverse_lazy('income')
     template_name = 'edit-income.html'
+
+
+class EditExpenseView(LoginRequiredMixin, UpdateView):
+    form_class = AddExpenseForm
+    model = Expenses
+    pk_url_kwarg = 'expense_id'
+    success_url = reverse_lazy('expenses')
+    template_name = 'edit-expense.html'

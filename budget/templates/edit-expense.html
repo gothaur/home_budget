@@ -5,6 +5,7 @@
     <label for="id_{{ form.date.name }}"></label>
     <input type="date" name="{{ form.date.name }}" value="{{ form.date.value|date:'Y-m-d' }}" class="form-control mb-2 mr-sm-2" required id="id_{{ form.date.name }}">
     {{ form.amount }}
+    {{ form.category }}
     {{ form.comment }}
     <button type="submit" class="btn btn-outline-secondary form-control mb-2">Edytuj</button>
 </form>
