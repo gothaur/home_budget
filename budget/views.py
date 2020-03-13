@@ -47,15 +47,15 @@ class Index(View):
 
         return redirect('expenses')
 
-    def post(self, request):
-
-        user = authenticate(username=request.POST['username'], password=request.POST['password'])
-        if user is not None:
-            login(request, user)
-            # request.session['username'] = user.username
-            return redirect('summary')
-
-        return redirect('auth_ex:login')
+    # def post(self, request):
+    #
+    #     user = authenticate(username=request.POST['username'], password=request.POST['password'])
+    #     if user is not None:
+    #         login(request, user)
+    #         # request.session['username'] = user.username
+    #         return redirect('summary')
+    #
+    #     return redirect('auth_ex:login')
 
 
 class ExpensesView(LoginRequiredMixin, View):

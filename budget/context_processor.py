@@ -41,7 +41,7 @@ def add_entry_form(request):
             name__in=[category.name for category in user_categories]
         )
     except:
-        print('nastapil jakis blad')
+        pass
     context = {
         'expense_form': expense_form,
         'income_form': income_form,

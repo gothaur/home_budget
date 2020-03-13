@@ -28,3 +28,14 @@ class Expenses(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     comment = models.CharField(max_length=255)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+
+class Message(models.Model):
+    subject = models.CharField(
+        max_length=64,
+    )
+    message = models.TextField()
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )

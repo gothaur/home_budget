@@ -29,22 +29,6 @@ class EditUserForm(forms.Form):
         disabled=True,
         required=False
     )
-    first_name = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control mb-3',
-                'placeholder': 'Imię',
-            }),
-        label='',
-    )
-    last_name = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control mb-3',
-                'placeholder': 'Nazwisko',
-            }),
-        label='',
-    )
     email = forms.CharField(
         widget=forms.EmailInput(
             attrs={

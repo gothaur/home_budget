@@ -1,6 +1,12 @@
 {% extends "__base_view__.html" %}
-{% block title %}Rejestracja{% endblock title %}
+{% block title %}Logowanie{% endblock title %}
 {% block body %}
-  <p>Nastąpiło poprawne wylogowanie</p>
-  <p>Zaloguj się <a href="{% url 'auth_ex:login' %}">ponownie</a></p>
+  <div class="card text-center mx-auto" style="max-width: 26rem; margin-top: 10%">
+    <div class="card-header text-center">
+      <p>Nastąpiło poprawne wylogowanie</p>
+    </div>
+    <div class="card-body">
+      <p>Zaloguj się <a href="{% url 'auth_ex:login' %}">ponownie</a></p>
+    </div>
+  </div>
 {% endblock %}
