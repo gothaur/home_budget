@@ -30,6 +30,7 @@ from home_budget.functions import (
 )
 from budget.forms import (
     AddExpenseForm,
+    AddIncomeForm,
 )
 from budget.models import (
     Expenses,
@@ -232,7 +233,8 @@ class DeleteIncomeView(LoginRequiredMixin, DeleteView):
 
 
 class EditIncomeView(LoginRequiredMixin, UpdateView):
-    template_name = 'edit-income.html'
+    form_class = AddIncomeForm
     model = Income
     pk_url_kwarg = 'income_id'
     success_url = reverse_lazy('income')
+    template_name = 'edit-income.html'

@@ -2,6 +2,7 @@ from django import forms
 from django.utils import timezone
 from budget.models import (
     Category,
+    Income,
 )
 
 
@@ -21,18 +22,50 @@ class AddExpenseForm(forms.Form):
     )
 
 
-class AddIncomeForm(forms.Form):
+# class AddIncomeForm(forms.Form):
+#     date = forms.DateField(
+#         widget=forms.DateInput(
+#             attrs={
+#                 'class': 'form-control mb-2 mr-sm-2',
+#                 'type': 'date',
+#             }
+#         ),
+#         label='Data',
+#         initial=timezone.datetime.today().strftime('%Y-%m-%d'),
+#     )
+#     date.input_type = 'date'
+#     amount = forms.DecimalField(
+#         widget=forms.NumberInput(
+#             attrs={
+#                 'class': 'form-control mb-2 mr-sm-2',
+#             }
+#         ),
+#         label='Kwota',
+#         decimal_places=2,
+#         max_digits=10,
+#     )
+#     comment = forms.CharField(
+#         widget=forms.Textarea(
+#             attrs={
+#                 'class': 'form-control mb-2 mr-sm-2',
+#                 'rows': 2,
+#             }
+#         ),
+#         required=False,
+#         max_length=255,
+#         label='Komentarz',
+#     )
+
+
+class AddIncomeForm(forms.ModelForm):
     date = forms.DateField(
         widget=forms.DateInput(
             attrs={
                 'class': 'form-control mb-2 mr-sm-2',
-                'type': 'date',
             }
         ),
         label='Data',
-        initial=timezone.datetime.today().strftime('%Y-%m-%d'),
     )
-    date.input_type = 'date'
     amount = forms.DecimalField(
         widget=forms.NumberInput(
             attrs={
@@ -54,6 +87,14 @@ class AddIncomeForm(forms.Form):
         max_length=255,
         label='Komentarz',
     )
+
+    class Meta:
+        model = Income
+        fields = [
+            'date',
+            'amount',
+            'comment',
+        ]
 
 
 class FilterExpensesForm(forms.Form):

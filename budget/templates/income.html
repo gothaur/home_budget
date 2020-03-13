@@ -29,6 +29,12 @@
             <td style="text-align: right">{{ income.amount }}</td>
             <td>{{ income.comment }}</td>
             <td>
+              <form action="{% url 'edit-income' income.id %}" method "post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link btn-sm">
+                  edit
+                </button>
+              </form>
               <form action="{% url 'delete-income' income.id %}" method="post">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-link btn-sm">

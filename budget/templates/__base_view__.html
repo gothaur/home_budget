@@ -98,7 +98,12 @@
           {% if message == "income" %}
             <form method="post" class="form-group">
               {% csrf_token %}
-              {{ income_form }}
+              <th><label for="id_{{ income_form.date.name }}">Data:</label></th>
+                <td>
+                  <input type="date" name="{{ income_form.date.name }}" value="{{ today }}" class="form-control mb-2 mr-sm-2" required id="id_{{ income_form.date.name }}">
+                </td>
+                {{ income_form.amount }}
+                {{ income_form.comment }}
               <button type="submit" class="btn btn-outline-secondary form-control mb-2">Dodaj</button>
             </form>
           {% endif %}
