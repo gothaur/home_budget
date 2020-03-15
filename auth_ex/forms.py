@@ -69,3 +69,7 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = get_user_model()
         fields = ['username', 'password1', 'password2']
+
+
+class UploadFileForm(forms.Form):
+    file = forms.FileField()

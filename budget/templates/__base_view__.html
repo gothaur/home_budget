@@ -22,15 +22,27 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="{% url 'summary' %}">Podsumowanie<span class="sr-only">(current)</span></a>
+    <ul class="navbar-nav mr-auto" id="MyNav">
+      <li class="nav-item">
+        {% if message == "summary" %}
+          <a class="nav-link active" href="{% url 'summary' %}">Podsumowanie</a>
+        {% else %}
+          <a class="nav-link" href="{% url 'summary' %}">Podsumowanie</a>
+        {% endif %}
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'income' %}">Przychody</a>
+        {% if message == "income" %}
+          <a class="nav-link active" href="{% url 'income' %}">Przychody</a>
+        {% else %}
+          <a class="nav-link" href="{% url 'income' %}">Przychody</a>
+        {% endif %}
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'expenses' %}">Wydatki</a>
+        {% if message == "expenses" %}
+          <a class="nav-link active" href="{% url 'expenses' %}">Wydatki</a>
+        {% else %}
+          <a class="nav-link" href="{% url 'expenses' %}">Wydatki</a>
+        {% endif %}
       </li>
       {% if not user.is_authenticated %}
         <li class="nav-item">
@@ -50,16 +62,6 @@
         </li>
       {% endif %}
     </ul>
-{#    {% if not user.is_authenticated %}#}
-{#      <form class="form-inline my-2 my-lg-0" method="post">#}
-{#        {% csrf_token %}#}
-{#        <input class="form-control form-control-sm mr-sm-2" type="text" name="username"#}
-{#               placeholder="Nazwa użytkownika" aria-label="login">#}
-{#        <input class="form-control form-control-sm mr-sm-2" type="password" name="password"#}
-{#               placeholder="Hasło" aria-label="password">#}
-{#        <button class="btn btn-outline-success btn-sm" type="submit">Zaloguj</button>#}
-{#      </form>#}
-{#    {% endif %}#}
   </div>
 </nav>
 <div class="container-fluid text-center">
@@ -99,11 +101,11 @@
             <form method="post" class="form-group">
               {% csrf_token %}
               <th><label for="id_{{ income_form.date.name }}">Data:</label></th>
-                <td>
-                  <input type="date" name="{{ income_form.date.name }}" value="{{ today }}" class="form-control mb-2 mr-sm-2" required id="id_{{ income_form.date.name }}">
-                </td>
-                {{ income_form.amount }}
-                {{ income_form.comment }}
+              <td>
+                <input type="date" name="{{ income_form.date.name }}" value="{{ today }}" class="form-control mb-2 mr-sm-2" required id="id_{{ income_form.date.name }}">
+              </td>
+              {{ income_form.amount }}
+              {{ income_form.comment }}
               <button type="submit" class="btn btn-outline-secondary form-control mb-2">Dodaj</button>
             </form>
           {% endif %}
@@ -132,7 +134,7 @@
               </tbody>
             </table>
           {% endif %}
-        {% if message == "summary" %}
+          {% if message == "summary" %}
             Twoje oszczędności <hr>
             {{ total_savings }}
           {% endif %}
@@ -201,7 +203,7 @@
       </div>
     </div>
   </div>
-<footer style="position: fixed; text-align: center; width: 100%; bottom: 0">Gosia ma kotki :) | wersja: {{ version }}</footer>
+  <footer style="position: fixed; text-align: center; width: 100%; bottom: 0">Gosia ma kotki :) | wersja: {{ version }}</footer>
 </div>
 
 <!-- Optional JavaScript -->

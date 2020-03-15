@@ -1,5 +1,7 @@
 import datetime
 import calendar
+import openpyxl
+import re
 
 from django.utils import timezone
 
@@ -35,3 +37,44 @@ def data_filter(request, model, date_from, date_to, selected_category="-1",
 
 def get_month_names():
     return [datetime.date(2000, m, 1) for m in range(1, 13)]
+
+
+def file_handler(file):
+    list_of_expenses = []
+    list_of_incomes = []
+    work_book = openpyxl.load_workbook(file, data_only=True)
+    sheet_names_regex = re.compile(r'\d{4}-\d{2}')
+    sheet_names = []
+    for name in work_book.get_sheet_names():
+        if sheet_names_regex.search(name):
+            sheet_names.append(name)
+    for name in sheet_names:
+        sheet = work_book.get_sheet_by_name(name)
+        for i, row in enumerate(sheet.iter_rows()):
+            expense_date = sheet['B' + str(i + 5)].value or list_of_expenses[-1]['expense_date']
+            category = sheet['C' + str(i + 5)].value
+            expense_amount = sheet['D' + str(i + 5)].value
+            expense_comment = sheet['E' + str(i + 5)].value or "Komentarz"
+            if expense_amount is not None:
+                expense_data = {
+                    'expense_date': expense_date,
+                    'category': category,
+                    'expense_amount': expense_amount,
+                    'expense_comment': expense_comment,
+                }
+                list_of_expenses.append(
+                    expense_data
+                )
+            income_amount = sheet['I' + str(i + 5)].value
+            if income_amount is not None:
+                income_date = sheet['H' + str(i + 5)].value or list_of_incomes[-1]['income_date']
+                income_comment = sheet['J' + str(i + 5)].value
+                income_data = {
+                    'income_date': income_date,
+                    'income_amount': income_amount,
+                    'income_comment': income_comment,
+                }
+                list_of_incomes.append(income_data)
+            if expense_amount is None and income_amount is None:
+                break
+    return list_of_expenses, list_of_incomes

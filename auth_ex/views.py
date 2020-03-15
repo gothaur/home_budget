@@ -21,14 +21,20 @@ from django.views import (
 from django.views.generic import (
     TemplateView,
 )
-from budget.models import (
-    Category,
-)
 from auth_ex.forms import (
     AddCategoryForm,
     EditUserForm,
-    CustomUserCreationForm
+    CustomUserCreationForm,
+    UploadFileForm,
 )
+from budget.models import (
+    Category,
+    Expenses,
+    Income)
+from home_budget.functions import (
+    file_handler,
+)
+
 User = get_user_model()
 
 
@@ -55,10 +61,12 @@ class SettingsView(View):
             'email': user.email,
         })
         add_category_form = AddCategoryForm()
+        upload_file_form = UploadFileForm()
         context = {
             'add_category_form': add_category_form,
             'user': user,
             'user_form': user_form,
+            'upload_file_form': upload_file_form,
         }
         return render(request, 'auth_ex/settings.html', context)
 
@@ -100,6 +108,43 @@ class SettingsView(View):
                     request,
                     messages.SUCCESS,
                     "Pomyślnie zmieniono dane",
+                )
+
+        if form_name == "upload_file":
+            file_form = UploadFileForm(request.POST, request.FILES)
+            if file_form.is_valid():
+                data = file_handler(request.FILES['file'])
+                for expense in data[0]:
+                    Expenses.objects.create(
+                        date=expense['expense_date'],
+                        category=Category.objects.get_or_create(
+                            name__iexact=expense['category'],
+                            defaults={
+                                'default_category': False
+                            },
+                        )[0],
+                        amount=expense['expense_amount'],
+                        comment=expense['expense_comment'],
+                        user=request.user,
+                    )
+                for income in data[1]:
+                    Income.objects.create(
+                        date=income['income_date'],
+                        amount=income['income_amount'],
+                        comment=income['income_comment'],
+                        user=request.user,
+                    )
+
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    "Pomyślnie wczytano dane",
+                )
+            else:
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    "Błąd wczytywania danych",
                 )
 
         return redirect('auth_ex:settings')
