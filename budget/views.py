@@ -1,7 +1,11 @@
+import requests
+import pygal
+from pygal.style import (
+    LightColorizedStyle as LCS,
+    LightenStyle as LS,
+)
 from django.contrib.auth import (
-    authenticate,
     get_user_model,
-    login,
 )
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
@@ -22,6 +26,7 @@ from django.views import (
 )
 from django.views.generic import (
     DeleteView,
+    DetailView,
     UpdateView,
 )
 from home_budget.functions import (
@@ -45,7 +50,29 @@ class Index(View):
         if not request.user.is_authenticated:
             return render(request, 'welcome-page.html')
 
-        return redirect('expenses')
+        url = "http://127.0.0.1:8000/api/api-income/"
+        # url = reverse_lazy('')
+        # url = "https://api.github.com/search/repositories?q=language:python&sort=stars"
+        r = requests.get(url)
+
+        response_list = r.json()
+        date, amount = [], []
+        for income in response_list:
+            date.append(income['date'])
+            amount.append(float(income['amount']))
+        my_style = LS('#333366', base_style=LCS)
+        chart = pygal.Bar(
+            style=my_style,
+            x_label_rotation=45,
+            show_legend=False,
+        )
+        chart.force_uri_protocol = 'https'
+        chart.title = 'Miesięczne przychody'
+        chart.x_labels = date
+        chart.add('', amount)
+        result = chart.render_data_uri()
+
+        return render(request, 'chart.html', {'chart': result})
 
 
 class ExpensesView(LoginRequiredMixin, View):
@@ -236,3 +263,9 @@ class EditExpenseView(LoginRequiredMixin, UpdateView):
     pk_url_kwarg = 'expense_id'
     success_url = reverse_lazy('expenses')
     template_name = 'edit-expense.html'
+
+
+class IncomeDetailView(DetailView):
+    model = Income
+    pk_url_kwarg = 'income_id'
+    template_name = 'income-detail.html'

@@ -18,7 +18,12 @@ class ExpensesSerializer(serializers.ModelSerializer):
         fields = ['date', 'category', 'amount', 'comment']
 
 
-class IncomeSerializer(serializers.ModelSerializer):
+class IncomeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Income
-        fields = ['date', 'amount', 'comment']
+        fields = [
+            # 'url',
+            'date',
+            'amount',
+            'comment'
+        ]
