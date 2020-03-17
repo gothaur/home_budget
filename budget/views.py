@@ -1,4 +1,3 @@
-import requests
 import pygal
 from pygal.style import (
     LightColorizedStyle as LCS,
@@ -12,6 +11,10 @@ from django.contrib.auth.mixins import (
 )
 from django.db.models import (
     Sum,
+)
+from django.db.models.functions import (
+    TruncMonth,
+    TruncYear,
 )
 from django.shortcuts import (
     redirect,
@@ -50,29 +53,67 @@ class Index(View):
         if not request.user.is_authenticated:
             return render(request, 'welcome-page.html')
 
-        url = "http://127.0.0.1:8000/api/api-income/"
-        # url = reverse_lazy('')
-        # url = "https://api.github.com/search/repositories?q=language:python&sort=stars"
-        r = requests.get(url)
-
-        response_list = r.json()
-        date, amount = [], []
-        for income in response_list:
-            date.append(income['date'])
-            amount.append(float(income['amount']))
+        # income_url = f"http://127.0.0.1:8000/api/{request.user.username}/api-income/"
+        # # url = reverse("api:Income-list")
+        # # url = reverse("income", request=request)
+        # # url = "http://127.0.0.1:8000/api/income/"
+        # # url = "https://api.github.com/search/repositories?q=language:python&sort=stars"
+        # requested_income = requests.get(income_url)
+        #
+        # response_income_list = requested_income.json()
+        user = request.user
+        income_list = Income.objects.filter(
+            user=user,
+        ).annotate(
+            month=TruncMonth('date'),
+        ).values(
+            'month',
+        ).annotate(date_sum=Sum('amount')).order_by('month')
+        income_date, income_amount = [], []
+        for income in income_list:
+            income_date.append(income['month'].strftime('%Y-%m'))
+            income_amount.append(float(income['date_sum']))
         my_style = LS('#333366', base_style=LCS)
-        chart = pygal.Bar(
+        income_chart = pygal.Bar(
             style=my_style,
             x_label_rotation=45,
             show_legend=False,
         )
-        chart.force_uri_protocol = 'https'
-        chart.title = 'Miesięczne przychody'
-        chart.x_labels = date
-        chart.add('', amount)
-        result = chart.render_data_uri()
+        income_chart.force_uri_protocol = 'https'
+        income_chart.title = 'Miesięczne przychody [w PLN]'
+        income_chart.x_labels = income_date
+        income_chart.add('', income_amount)
+        income_result = income_chart.render_data_uri()
 
-        return render(request, 'chart.html', {'chart': result})
+        expenses_category, expenses_amount = [], []
+        expenses_list = Expenses.objects.filter(
+            user=user,
+        ).values(
+            'category__name',
+        ).annotate(cat_sum=Sum('amount')).order_by('-cat_sum')
+        for expense in expenses_list:
+            expenses_category.append(expense['category__name'])
+            expenses_amount.append(float(expense['cat_sum']))
+        expenses_chart = pygal.Bar(
+            style=my_style,
+            x_label_rotation=45,
+            show_legend=False,
+        )
+        expenses_chart.force_uri_protocol = 'https'
+        expenses_chart.title = 'Wydatki wg kategorii [w PLN]'
+        expenses_chart.x_labels = expenses_category
+        expenses_chart.add('', expenses_amount)
+        expenses_result = expenses_chart.render_data_uri()
+
+        context = {
+            'income_chart': income_result,
+            'expenses_chart': expenses_result,
+        }
+
+        return render(
+            request, 'chart.html',
+            context,
+        )
 
 
 class ExpensesView(LoginRequiredMixin, View):
@@ -265,7 +306,7 @@ class EditExpenseView(LoginRequiredMixin, UpdateView):
     template_name = 'edit-expense.html'
 
 
-class IncomeDetailView(DetailView):
+class IncomeDetailView(LoginRequiredMixin, DetailView):
     model = Income
     pk_url_kwarg = 'income_id'
     template_name = 'income-detail.html'

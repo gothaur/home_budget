@@ -35,10 +35,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'budget',
     'rest_framework',
-    'api',
+    'api.apps.ApiConfig',
     'auth_ex',
+    'budget',
 ]
 
 MIDDLEWARE = [
@@ -149,5 +149,3 @@ except ModuleNotFoundError:
     print("Nie ustawiono klucza SECRET_KEY w pliku local_settings.py!")
     print("Uzupełnij dane i spróbuj ponownie!")
     exit(0)
-
-print(f"base dir path: {BASE_DIR}")

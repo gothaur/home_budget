@@ -1,7 +1,11 @@
 {% extends '__base_view__.html' %}
 {% block body %}
-  <!-- Don't forget the "|safe"! -->
+  Przychody:
   <div id="chart">
-    <embed type="image/svg+xml" src= {{ chart|safe }} />
+    <embed type="image/svg+xml" src= {{ income_chart|safe }} />
+  </div>
+  Wydatki:
+  <div id="chart">
+    <embed type="image/svg+xml" src= {{ expenses_chart|safe }} />
   </div>
 {% endblock %}

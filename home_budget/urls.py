@@ -22,7 +22,6 @@ from budget import views
 
 urlpatterns = [
     path('', views.Index.as_view(), name='index'),
-    # path('add-category/', views.AddCategory.as_view(), name='add-category'),
     path('admin/', admin.site.urls),
     path('api/', include('api.urls', namespace='api'),),
     path('expense/delete/<int:expense_id>/', views.DeleteExpenseView.as_view(), name='delete-expense'),

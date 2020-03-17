@@ -13,17 +13,26 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ExpensesSerializer(serializers.ModelSerializer):
+    category = serializers.StringRelatedField()
+
     class Meta:
         model = Expenses
-        fields = ['date', 'category', 'amount', 'comment']
+        fields = [
+            'date',
+            'category',
+            'amount',
+            'comment',
+            'user',
+        ]
 
 
-class IncomeSerializer(serializers.HyperlinkedModelSerializer):
+# class IncomeSerializer(serializers.HyperlinkedModelSerializer):
+class IncomeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Income
         fields = [
-            # 'url',
             'date',
             'amount',
-            'comment'
+            'comment',
+            'user',
         ]
