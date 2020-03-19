@@ -61,45 +61,34 @@ class Index(View):
         if not request.user.is_authenticated:
             return render(request, 'welcome-page.html')
 
-        # income_url = f"http://127.0.0.1:8000/api/{request.user.username}/api-income/"
-        # # url = reverse("api:Income-list")
-        # # url = reverse("income", request=request)
-        # # url = "http://127.0.0.1:8000/api/income/"
-        # # url = "https://api.github.com/search/repositories?q=language:python&sort=stars"
-        # requested_income = requests.get(income_url)
-        #
-        # response_income_list = requested_income.json()
         user = request.user
-        income_list = Income.objects.filter(
+        monthly_incomes_list = Income.objects.filter(
             user=user,
         ).annotate(
             month=TruncMonth('date'),
         ).values(
             'month',
         ).annotate(date_sum=Sum('amount')).order_by('month')
-        income_date, income_amount = [], []
-        # for income in income_list:
-        #     income_date.append(income['month'].strftime('%Y-%m'))
-        #     income_amount.append(float(income['date_sum']))
-        for income in income_list:
-            income_date.append(income['month'].strftime('%Y-%m'))
-            income_amount.append(
+        dates, monthly_income_sum = [], []
+        for income in monthly_incomes_list:
+            dates.append(income['month'].strftime('%Y-%m'))
+            monthly_income_sum.append(
                 {
                     'value': float(income['date_sum']),
                     'color': 'green',
                 }
             )
 
-        total_expenses_list = Expenses.objects.filter(
+        monthly_expenses_list = Expenses.objects.filter(
             user=user,
         ).annotate(
             month=TruncMonth('date'),
         ).values(
             'month',
         ).annotate(date_sum=Sum('amount')).order_by('month')
-        total_expenses_amount = []
-        for expenses in total_expenses_list:
-            total_expenses_amount.append(
+        monthly_expenses_sum = []
+        for expenses in monthly_expenses_list:
+            monthly_expenses_sum.append(
                 {
                     'value': float(expenses['date_sum']),
                     'color': 'red',
@@ -122,18 +111,18 @@ class Index(View):
         )
         income_chart.force_uri_protocol = 'https'
         income_chart.title = 'Miesięczne przychody [w PLN]'
-        income_chart.x_labels = income_date
+        income_chart.x_labels = dates
         income_chart.add(
             'Przychody',
-            income_amount,
+            monthly_income_sum,
             color='green',
         )
         income_chart.add(
             'Wydatki',
-            total_expenses_amount,
+            monthly_expenses_sum,
         )
 
-        income_result = income_chart.render_data_uri()
+        monthly_savings_chart = income_chart.render_data_uri()
 
         expenses_category, expenses_amount = [], []
         expenses_list = Expenses.objects.filter(
@@ -160,7 +149,7 @@ class Index(View):
         expenses_result = expenses_chart.render_data_uri()
 
         context = {
-            'income_chart': income_result,
+            'income_chart': monthly_savings_chart,
             'expenses_chart': expenses_result,
         }
 
