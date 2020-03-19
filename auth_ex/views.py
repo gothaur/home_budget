@@ -7,7 +7,10 @@ from django.contrib.auth import (
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
 )
-from django.urls import reverse_lazy
+from django.db.models import Q
+from django.urls import (
+    reverse_lazy,
+)
 from django.views.generic import (
     CreateView,
 )
@@ -30,7 +33,8 @@ from auth_ex.forms import (
 from budget.models import (
     Category,
     Expenses,
-    Income)
+    Income
+)
 from home_budget.functions import (
     file_handler,
 )
@@ -115,14 +119,29 @@ class SettingsView(View):
             if file_form.is_valid():
                 data = file_handler(request.FILES['file'])
                 for expense in data[0]:
+
+                    try:
+                        category = Category.objects.get(name__iexact=expense['category'])
+                    except Category.DoesNotExist:
+                        category = Category.objects.create(
+                            name=expense['category'],
+                            default_category=False
+                        )
+                    # category = Category.objects.get_or_create(
+                    #         name__iexact=expense['category'],
+                    #         defaults={
+                    #             'default_category': False
+                    #         },
+                    #     )[0]
                     Expenses.objects.create(
                         date=expense['expense_date'],
-                        category=Category.objects.get_or_create(
-                            name__iexact=expense['category'],
-                            defaults={
-                                'default_category': False
-                            },
-                        )[0],
+                        # category=Category.objects.get_or_create(
+                        #     name__iexact=expense['category'],
+                        #     defaults={
+                        #         'default_category': False
+                        #     },
+                        # )[0],
+                        category=category,
                         amount=expense['expense_amount'],
                         comment=expense['expense_comment'],
                         user=request.user,

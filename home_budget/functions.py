@@ -8,7 +8,6 @@ from django.utils import timezone
 
 def data_filter(request, model, date_from, date_to, selected_category="-1",
                 month=timezone.now().month, year=timezone.now().year):
-
     if date_from == timezone.localdate() or date_from == "":
         date_from = datetime.date(
             year=year,
@@ -55,7 +54,7 @@ def file_handler(file):
             category = sheet['C' + str(i + 5)].value
             expense_amount = sheet['D' + str(i + 5)].value
             expense_comment = sheet['E' + str(i + 5)].value or "Komentarz"
-            if expense_amount is not None:
+            if isinstance(expense_amount, (float, int)) and isinstance(expense_date, datetime.date):
                 expense_data = {
                     'expense_date': expense_date,
                     'category': category,
@@ -66,7 +65,7 @@ def file_handler(file):
                     expense_data
                 )
             income_amount = sheet['I' + str(i + 5)].value
-            if income_amount is not None:
+            if isinstance(income_amount, float) or isinstance(income_amount, int):
                 income_date = sheet['H' + str(i + 5)].value or list_of_incomes[-1]['income_date']
                 income_comment = sheet['J' + str(i + 5)].value
                 income_data = {

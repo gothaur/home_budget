@@ -1,9 +1,14 @@
-import datetime
-
+from datetime import (
+    date,
+)
+from dateutil.relativedelta import (
+    relativedelta,
+)
 import pygal
 from pygal.style import (
     LightColorizedStyle as LCS,
     LightenStyle as LS,
+    Style,
 )
 from django.contrib.auth import (
     get_user_model,
@@ -43,6 +48,7 @@ from budget.forms import (
     AddIncomeForm,
 )
 from budget.models import (
+    Category,
     Expenses,
     Income,
 )
@@ -72,19 +78,61 @@ class Index(View):
             'month',
         ).annotate(date_sum=Sum('amount')).order_by('month')
         income_date, income_amount = [], []
+        # for income in income_list:
+        #     income_date.append(income['month'].strftime('%Y-%m'))
+        #     income_amount.append(float(income['date_sum']))
         for income in income_list:
             income_date.append(income['month'].strftime('%Y-%m'))
-            income_amount.append(float(income['date_sum']))
-        my_style = LS('#333366', base_style=LCS)
-        income_chart = pygal.Bar(
+            income_amount.append(
+                {
+                    'value': float(income['date_sum']),
+                    'color': 'green',
+                }
+            )
+
+        total_expenses_list = Expenses.objects.filter(
+            user=user,
+        ).annotate(
+            month=TruncMonth('date'),
+        ).values(
+            'month',
+        ).annotate(date_sum=Sum('amount')).order_by('month')
+        total_expenses_amount = []
+        for expenses in total_expenses_list:
+            total_expenses_amount.append(
+                {
+                    'value': float(expenses['date_sum']),
+                    'color': 'red',
+                }
+            )
+        my_style = Style(
+            colors=(
+                'green',
+                # 'red',
+                '#d10f25',
+            )
+        )
+        income_chart = pygal.Line(
+            fill=True,
             style=my_style,
             x_label_rotation=45,
             show_legend=False,
+            interpolate='hermite',
+
         )
         income_chart.force_uri_protocol = 'https'
         income_chart.title = 'Miesięczne przychody [w PLN]'
         income_chart.x_labels = income_date
-        income_chart.add('', income_amount)
+        income_chart.add(
+            'Przychody',
+            income_amount,
+            color='green',
+        )
+        income_chart.add(
+            'Wydatki',
+            total_expenses_amount,
+        )
+
         income_result = income_chart.render_data_uri()
 
         expenses_category, expenses_amount = [], []
@@ -96,6 +144,10 @@ class Index(View):
         for expense in expenses_list:
             expenses_category.append(expense['category__name'])
             expenses_amount.append(float(expense['cat_sum']))
+        my_style = LS(
+            '#333366',
+            base_style=LCS,
+        )
         expenses_chart = pygal.Bar(
             style=my_style,
             x_label_rotation=45,
@@ -187,127 +239,157 @@ class Summary(LoginRequiredMixin, View):
 
     def get(self, request):
         user = User.objects.get(pk=request.user.id)
-        # date_from = request.GET.get("date_from", timezone.localdate())
-        # date_to = request.GET.get("date_to", timezone.localdate())
-        # total_income = data_filter(
-        #     request,
-        #     Income,
-        #     date_from,
-        #     date_to,
-        # ).aggregate(Sum('amount'))['amount__sum']
-        # total_income = total_income or 0
-        # total_expenses = data_filter(
-        #     request,
-        #     Expenses,
-        #     date_from,
-        #     date_to,
-        # ).aggregate(Sum('amount'))['amount__sum']
-        # total_expenses = total_expenses or 0
-        # savings = total_income - total_expenses
-        # income = Income.objects.filter(
-        #     user_id=user.id,
-        # ).aggregate(
-        #     Sum('amount')
-        # )['amount__sum'] or 0
-        # expenses = Expenses.objects.filter(
-        #     user_id=user.id,
-        # ).aggregate(
-        #     Sum('amount')
-        # )['amount__sum'] or 0
-        # total_savings = income - expenses
-        #
-        # months = get_month_names()
-        # categories = user.categories.order_by('name')
-        #
-        # result = []
-        #
-        # for i, category in enumerate(categories):
-        #     result.append([])
-        #     for month in range(1, 13):
-        #         monthly_amount = Expenses.objects.filter(
-        #             user=request.user,
-        #             category__name=category.name,
-        #             date__year=timezone.now().year,
-        #             date__month=month).aggregate(Sum('amount'))['amount__sum']
-        #         result[i].append(monthly_amount if monthly_amount is not None else 0)
-        #
-        # monthly_income = []
-        # monthly_expenses = []
-        # sigma = []
-        #
-        # for month in range(1, 13):
-        #     income = Income.objects.filter(
-        #         user_id=user.id,
-        #         date__year=timezone.now().year,
-        #         date__month=month,
-        #     ).aggregate(Sum('amount'))['amount__sum']
-        #     monthly_income.append(
-        #         income if income is not None else 0
-        #     )
-        #     expense = Expenses.objects.filter(
-        #         user_id=user.id,
-        #         date__year=timezone.now().year,
-        #         date__month=month,
-        #     ).aggregate(Sum('amount'))['amount__sum']
-        #     monthly_expenses.append(
-        #         expense if expense is not None else 0
-        #     )
-        #
-        #     sigma.append(monthly_income[month - 1] - monthly_expenses[month - 1])
-        #
-        # context = {
-        #     'total_income': total_income,
-        #     'total_expenses': total_expenses,
-        #     'savings': savings,
-        #     'months': months,
-        #     'categories': categories,
-        #     'result': result,
-        #     'date_from': date_from,
-        #     'date_to': date_to,
-        #     'monthly_income': monthly_income,
-        #     'monthly_expenses': monthly_expenses,
-        #     'total_savings': total_savings,
-        #     'sigma': sigma,
-        # }
-        user = request.user
-        expenses_set = Expenses.objects.filter(
-            user=user,
-            date__gte=datetime.date(2019, 7, 15),
-        ).annotate(
-            month=TruncMonth('date'),
-        ).values(
-            'month',
-            'category__name',
-        ).annotate(
-            date_sum=Sum('amount')
-        ).order_by('month')
-        category_names, income_amount = [], []
-        for expense in expenses_set:
-            category_names.append(expense['month'].strftime('%Y-%m'))
-            # category_names.append(expense['category__name'])
-            income_amount.append(
-                {
-                    'value': float(expense['date_sum']),
-                    'label': expense['category__name'],
-                }
+        date_from = request.GET.get("date_from", timezone.localdate())
+        date_to = request.GET.get("date_to", timezone.localdate())
+        total_income = data_filter(
+            request,
+            Income,
+            date_from,
+            date_to,
+        ).aggregate(Sum('amount'))['amount__sum']
+        total_income = total_income or 0
+        total_expenses = data_filter(
+            request,
+            Expenses,
+            date_from,
+            date_to,
+        ).aggregate(Sum('amount'))['amount__sum']
+        total_expenses = total_expenses or 0
+        savings = total_income - total_expenses
+        income = Income.objects.filter(
+            user_id=user.id,
+        ).aggregate(
+            Sum('amount')
+        )['amount__sum'] or 0
+        expenses = Expenses.objects.filter(
+            user_id=user.id,
+        ).aggregate(
+            Sum('amount')
+        )['amount__sum'] or 0
+        total_savings = income - expenses
+
+        months = get_month_names()
+        categories = user.categories.order_by('name')
+
+        result = []
+
+        for i, category in enumerate(categories):
+            result.append([])
+            for month in range(1, 13):
+                monthly_amount = Expenses.objects.filter(
+                    user=request.user,
+                    category__name=category.name,
+                    date__year=timezone.now().year,
+                    date__month=month).aggregate(Sum('amount'))['amount__sum']
+                result[i].append(monthly_amount if monthly_amount is not None else 0)
+
+        monthly_income = []
+        monthly_expenses = []
+        sigma = []
+
+        for month in range(1, 13):
+            income = Income.objects.filter(
+                user_id=user.id,
+                date__year=timezone.now().year,
+                date__month=month,
+            ).aggregate(Sum('amount'))['amount__sum']
+            monthly_income.append(
+                income if income is not None else 0
             )
-        print(expenses_set)
-        my_style = LS('#333366', base_style=LCS)
-        income_chart = pygal.StackedBar(
-            style=my_style,
-            x_label_rotation=90,
-            show_legend=False,
-        )
-        income_chart.force_uri_protocol = 'https'
-        income_chart.title = 'Miesięczne wydatki [w PLN]'
-        income_chart.x_labels = category_names
-        income_chart.add('', income_amount)
-        income_result = income_chart.render_data_uri()
+            expense = Expenses.objects.filter(
+                user_id=user.id,
+                date__year=timezone.now().year,
+                date__month=month,
+            ).aggregate(Sum('amount'))['amount__sum']
+            monthly_expenses.append(
+                expense if expense is not None else 0
+            )
+
+            sigma.append(monthly_income[month - 1] - monthly_expenses[month - 1])
 
         context = {
-            'result': income_result,
+            'total_income': total_income,
+            'total_expenses': total_expenses,
+            'savings': savings,
+            'months': months,
+            'categories': categories,
+            'result': result,
+            'date_from': date_from,
+            'date_to': date_to,
+            'monthly_income': monthly_income,
+            'monthly_expenses': monthly_expenses,
+            'total_savings': total_savings,
+            'sigma': sigma,
         }
-        return render(request, 'summary-chart.html', context)
+        # user = request.user
+        # expenses_set = Expenses.objects.filter(
+        #     user=user,
+        #     date__gte=date.today() - relativedelta(months=6),
+        # ).annotate(
+        #     month=TruncMonth('date'),
+        # ).values(
+        #     'month',
+        #     'category__name',
+        # ).annotate(
+        #     date_sum=Sum('amount')
+        # ).order_by('month')
+        #
+        # categories = Category.objects.filter(user=user).order_by('name')
+        #
+        # # category_names, income_amount = [], []
+        # # for expense in expenses_set:
+        # #     category_names.append(expense['month'].strftime('%Y-%m'))
+        # #     # category_names.append(expense['category__name'])
+        # #     income_amount.append(
+        # #         {
+        # #             'value': float(expense['date_sum']),
+        # #             'label': expense['category__name'],
+        # #         }
+        # #     )
+        # # print(expenses_set)
+        #
+        # category_names, income_amount = [], []
+        # # for i, category in enumerate(categories):
+        # #     tmp = expenses_set.filter(category__name=category.name).order_by('date')
+        # #     print(tmp[0])
+        # #     income_amount.append(
+        # #         {
+        # #             'value': float(tmp[0]['date_sum']),
+        # #             'label': tmp[0]['category__name'],
+        # #         }
+        # #     )
+        # for expense in expenses_set:
+        #     category_names.append(expense['month'].strftime('%Y-%m'))
+        #     # category_names.append(expense['category__name'])
+        #     income_amount.append(
+        #         {
+        #             'value': float(expense['date_sum']),
+        #             'label': expense['category__name'],
+        #             'date': expense['month'].strftime('%Y-%m'),
+        #         }
+        #     )
+        # # print(zip(income_amount, category_names))
+        # # print(income_amount)
+        #
+        # my_style = LS('#333366', base_style=LCS)
+        # income_chart = pygal.StackedBar(
+        #     style=my_style,
+        #     x_label_rotation=90,
+        #     show_legend=False,
+        # )
+        # income_chart.force_uri_protocol = 'https'
+        # income_chart.title = 'Miesięczne wydatki [w PLN]'
+        # income_chart.x_labels = category_names
+        # # for expenses in income_amount:
+        # #     income_chart.add('', expenses)
+        # income_chart.add('', income_amount)
+        # income_result = income_chart.render_data_uri()
+        #
+        # context = {
+        #     'result': income_result,
+        # }
+        # return render(request, 'summary-chart.html', context)
+        return render(request, 'summary.html', context)
 
 
 class DeleteExpenseView(LoginRequiredMixin, DeleteView):

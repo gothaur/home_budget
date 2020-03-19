@@ -9,6 +9,9 @@ from django import forms
 from budget.models import (
     Category,
 )
+from home_budget.validators import (
+    validate_file_extension,
+)
 
 
 class EditUserForm(forms.Form):
@@ -72,4 +75,4 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class UploadFileForm(forms.Form):
-    file = forms.FileField()
+    file = forms.FileField(validators=[validate_file_extension])
