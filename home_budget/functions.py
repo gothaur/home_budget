@@ -65,7 +65,7 @@ def file_handler(file):
                     expense_data
                 )
             income_amount = sheet['I' + str(i + 5)].value
-            if isinstance(income_amount, float) or isinstance(income_amount, int):
+            if isinstance(income_amount, (float, int)):
                 income_date = sheet['H' + str(i + 5)].value or list_of_incomes[-1]['income_date']
                 income_comment = sheet['J' + str(i + 5)].value
                 income_data = {
@@ -77,3 +77,27 @@ def file_handler(file):
             if expense_amount is None and income_amount is None:
                 break
     return list_of_expenses, list_of_incomes
+
+
+def monthly_report(
+        month,
+        actual_month_income,
+        actual_month_expenses,
+        categorized_actual_month_expense_set,
+        # total_balance,
+):
+    result = ""
+    for expense in categorized_actual_month_expense_set:
+        result += f"    {expense['category__name']}: {expense['total_sum']}PLN\n"
+    report = f"""
+Raport z {month}:
+W tym miesiącu do kasy domowej wpłynęło {actual_month_income} PLN
+Łączna suma wydatków wynosi {actual_month_expenses}, w tym:
+
+{result}
+Saldo na koniec miesiąca wynosi {actual_month_income or 0 - actual_month_expenses or 0} PLN;
+
+
+To jest wiadomość automatyczna, proszę na nią nie odpowiadać.
+"""
+    return report

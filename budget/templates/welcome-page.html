@@ -1,4 +1,6 @@
 {% extends '__base_view__.html' %}
 {% block body %}
-  Witaj podrózniku :)
+  Znajdujesz się na stronie aplikacji pomagającej śledzić Twój miesięczny przepływ gotówki. Jeśli nie masz jeszcze konta,
+  <a href="{% url 'auth_ex:register' %}">tutaj</a> możesz się zarejstrować. Jeśli masz już konto,
+  <a href="{% url 'auth_ex:login' %}">zaloguj się</a>
 {% endblock %}

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib import (
     messages,
 )
@@ -7,7 +9,7 @@ from django.contrib.auth import (
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
 )
-from django.db.models import Q
+from django.db.models import Sum
 from django.urls import (
     reverse_lazy,
 )
@@ -38,7 +40,6 @@ from budget.models import (
 from home_budget.functions import (
     file_handler,
 )
-
 User = get_user_model()
 
 
@@ -54,14 +55,12 @@ class RegisterView(CreateView):
         return super().form_valid(form)
 
 
-class SettingsView(View):
+class SettingsView(LoginRequiredMixin, View):
 
     def get(self, request):
         user = User.objects.get(pk=request.user.id)
         user_form = EditUserForm(initial={
             'username': user.username,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
             'email': user.email,
         })
         add_category_form = AddCategoryForm()
@@ -72,6 +71,7 @@ class SettingsView(View):
             'user_form': user_form,
             'upload_file_form': upload_file_form,
         }
+
         return render(request, 'auth_ex/settings.html', context)
 
     def post(self, request):
@@ -104,8 +104,6 @@ class SettingsView(View):
             user_form = EditUserForm(request.POST)
             if user_form.is_valid():
                 user = User.objects.get(pk=request.user.id)
-                user.first_name = user_form.cleaned_data['first_name']
-                user.last_name = user_form.cleaned_data['last_name']
                 user.email = user_form.cleaned_data['email']
                 user.save()
                 messages.add_message(
@@ -127,20 +125,8 @@ class SettingsView(View):
                             name=expense['category'],
                             default_category=False
                         )
-                    # category = Category.objects.get_or_create(
-                    #         name__iexact=expense['category'],
-                    #         defaults={
-                    #             'default_category': False
-                    #         },
-                    #     )[0]
                     Expenses.objects.create(
                         date=expense['expense_date'],
-                        # category=Category.objects.get_or_create(
-                        #     name__iexact=expense['category'],
-                        #     defaults={
-                        #         'default_category': False
-                        #     },
-                        # )[0],
                         category=category,
                         amount=expense['expense_amount'],
                         comment=expense['expense_comment'],

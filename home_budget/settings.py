@@ -149,3 +149,16 @@ except ModuleNotFoundError:
     print("Nie ustawiono klucza SECRET_KEY w pliku local_settings.py!")
     print("Uzupełnij dane i spróbuj ponownie!")
     exit(0)
+
+try:
+    from home_budget.local_settings import SENDGRID_API_KEY
+except ModuleNotFoundError:
+    print("Nie ustawiono klucza SENDGRID_API_KEY w pliku local_settings.py!")
+    print("Uzupełnij dane i spróbuj ponownie!")
+    exit(0)
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

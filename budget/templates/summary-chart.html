@@ -1,12 +1,15 @@
 {% extends '__base_view__.html' %}
 {% block body %}
   Przychody:
-{#      <div id="chart">#}
-{#        <embed type="image/svg+xml" src= {{ result|safe }} />#}
-{#      </div>#}
-    <div class="table table-responsive" style="text-align: right">
-      {{ result|safe }}
-    </div>
-{#  {% load render_table from django_tables2 %}#}
-{#  {% render_table result %}#}
+{#        <div id="chart">#}
+{#          <embed type="image/svg+xml" src= {{ result|safe }} />#}
+{#        </div>#}
+      <div class="table table-responsive" style="text-align: right">
+        {{ result|safe }}
+      </div>
+{#  {% for d in dict %}#}
+{#    {% for key, value in d.items %}#}
+{#      {{ key }} - {{ value }}#}
+{#    {% endfor %}#}
+{#  {% endfor %}#}
 {% endblock %}

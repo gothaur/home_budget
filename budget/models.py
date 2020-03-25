@@ -36,12 +36,12 @@ class Expenses(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 
-class Message(models.Model):
-    subject = models.CharField(
-        max_length=64,
-    )
-    message = models.TextField()
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
-    )
+# class Message(models.Model):
+#     subject = models.CharField(
+#         max_length=64,
+#     )
+#     message = models.TextField()
+#     user = models.ForeignKey(
+#         settings.AUTH_USER_MODEL,
+#         on_delete=models.CASCADE
+#     )
