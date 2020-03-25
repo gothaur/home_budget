@@ -1,3 +1,4 @@
+import os
 from datetime import (
     datetime,
 )
@@ -29,6 +30,9 @@ from django.db.models.functions import (
 from django.db.models.functions import (
     TruncMonth,
 )
+from django.http import (
+    FileResponse,
+)
 from django.shortcuts import (
     redirect,
     render,
@@ -59,6 +63,8 @@ from budget.models import (
 from home_budget.functions import (
     monthly_report,
 )
+from home_budget.settings import BASE_DIR
+
 User = get_user_model()
 
 
@@ -241,88 +247,6 @@ class Index(View):
         expenses_chart.x_labels = expenses_category
         expenses_chart.add('', expenses_amount)
         expenses_result = expenses_chart.render_data_uri()
-        ############################################################################################
-
-        # expenses_set = Expenses.objects.filter(
-        #     user=user,
-        #     date__gte=datetime(
-        #         timezone.now().year,
-        #         timezone.now().month,
-        #         1,
-        #     ) - relativedelta(
-        #         months=11
-        #     ),
-        # ).annotate(
-        #     month=TruncMonth('date'),
-        # ).values(
-        #     'month',
-        #     'category__name',
-        # ).annotate(
-        #     date_sum=Sum('amount')
-        # ).order_by('month')
-        #
-        # categories = user.categories.order_by('name')
-        # label_dates, dates, expenses_by_category = [], [], []
-        # for expense in expenses_set:
-        #     label_dates.append(expense['month'].strftime('%Y-%m'))
-        #     dates.append(expense['month'])
-        #     expenses_by_category.append(
-        #         {
-        #             'value': float(expense['date_sum']),
-        #             'label': expense['category__name'],
-        #         }
-        #     )
-        #
-        # income_chart = pygal.Bar(
-        #     show_legend=True,
-        #     legend_at_bottom=True,
-        #     no_data_text="Brak danych",
-        # )
-        #
-        # income_chart.force_uri_protocol = 'https'
-        # income_chart.title = 'Miesięczne wydatki [w PLN]'
-        # tmp = {}
-        # dates = list(dict.fromkeys(dates))
-        # label_dates = list(dict.fromkeys(label_dates))
-        # income_chart.x_labels = label_dates
-        #
-        # for category in categories:
-        #     tmp[category.name] = []
-        #     for month in dates:
-        #         try:
-        #             elem = expenses_set.get(
-        #                 Q(
-        #                     category__name=category.name
-        #                 ) & Q(
-        #                     month=month
-        #                 )
-        #             )
-        #         except Expenses.DoesNotExist:
-        #             elem = {
-        #                 'category__name': category.name,
-        #                 'month': month,
-        #                 'date_sum': 0
-        #             }
-        #         tmp[category.name].append(
-        #             {
-        #                 'value': elem['date_sum'],
-        #                 'label': elem['category__name'],
-        #             }
-        #         )
-        #
-        # for t in tmp.values():
-        #     if len(t) > 0:
-        #         income_chart.add(
-        #             t[0]['label'],
-        #             t,
-        #         )
-
-        # income_result = income_chart.render_data_uri()
-        # income_result = income_chart.render_table(
-        #     style=True,
-        #     # total=True,
-        #     transpose=True,
-        # )
 
         context = {
             'income_chart': monthly_income_expense_chart,
@@ -330,98 +254,7 @@ class Index(View):
             'total_balance_chart': total_balance_chart,
         }
 
-        return render(
-            request, 'chart.html',
-            context,
-        )
-
-    # def get(self, request):
-    #
-    #     user = request.user
-    #     expenses_set = Expenses.objects.filter(
-    #         user=user,
-    #         date__gte=datetime(
-    #             timezone.now().year,
-    #             timezone.now().month,
-    #             1,
-    #         ) - relativedelta(
-    #             months=11
-    #         ),
-    #     ).annotate(
-    #         month=TruncMonth('date'),
-    #     ).values(
-    #         'month',
-    #         'category__name',
-    #     ).annotate(
-    #         date_sum=Sum('amount')
-    #     ).order_by('month')
-    #
-    #     categories = user.categories.order_by('name')
-    #     label_dates, dates, expenses_by_category = [], [], []
-    #     for expense in expenses_set:
-    #         label_dates.append(expense['month'].strftime('%Y-%m'))
-    #         dates.append(expense['month'])
-    #         expenses_by_category.append(
-    #             {
-    #                 'value': float(expense['date_sum']),
-    #                 'label': expense['category__name'],
-    #             }
-    #         )
-    #
-    #     income_chart = pygal.Bar(
-    #         show_legend=True,
-    #         legend_at_bottom=True,
-    #         no_data_text="Brak danych",
-    #     )
-    #
-    #     income_chart.force_uri_protocol = 'https'
-    #     income_chart.title = 'Miesięczne wydatki [w PLN]'
-    #     tmp = {}
-    #     dates = list(dict.fromkeys(dates))
-    #     label_dates = list(dict.fromkeys(label_dates))
-    #     income_chart.x_labels = label_dates
-    #
-    #     for category in categories:
-    #         tmp[category.name] = []
-    #         for month in dates:
-    #             try:
-    #                 elem = expenses_set.get(
-    #                     Q(
-    #                         category__name=category.name
-    #                     ) & Q(
-    #                         month=month
-    #                     )
-    #                 )
-    #             except Expenses.DoesNotExist:
-    #                 elem = {
-    #                     'category__name': category.name,
-    #                     'month': month,
-    #                     'date_sum': 0
-    #                 }
-    #             tmp[category.name].append(
-    #                 {
-    #                     'value': elem['date_sum'],
-    #                     'label': elem['category__name'],
-    #                 }
-    #             )
-    #
-    #     for t in tmp.values():
-    #         if len(t) > 0:
-    #             income_chart.add(
-    #                 t[0]['label'],
-    #                 t,
-    #             )
-    #
-    #     # income_result = income_chart.render_data_uri()
-    #     income_result = income_chart.render_table(
-    #         style=True,
-    #         # total=True,
-    #         transpose=True,
-    #     )
-    #     context = {
-    #         'result': income_result,
-    #     }
-    #     return render(request, 'summary-chart.html', context)
+        return render(request, 'chart.html', context)
 
 
 class ExpensesView(LoginRequiredMixin, View):
@@ -688,3 +521,12 @@ class GenerateReportView(LoginRequiredMixin, View):
             }
 
         return render(request, 'send-report.html', context)
+
+
+class ManualFileView(View):
+
+    def get(self, request):
+        return FileResponse(
+            open(os.path.join(BASE_DIR, 'media/documentation.pdf'), 'rb'),
+            # content_type='application/pdf'
+        )
