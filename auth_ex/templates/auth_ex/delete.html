@@ -1,8 +1,10 @@
 {% extends '__base_view__.html' %}
 {% block body %}
+  Jesteś pewien, że chcesz usunąć konto?
   <form method="post">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Usuń">
   </form>
+  <a href="{% url 'auth_ex:settings' %}">Powrót do ustawień</a>
 {% endblock %}
