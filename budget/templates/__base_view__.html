@@ -122,9 +122,9 @@
               <tbody>
               {% for category in all_categories %}
                 <tr>
-                  <td style="width: 90%; text-align: left">{{ category.name }}</td>
+                  <td style="width: 90%; text-align: left">{{ category.category__name }}</td>
                   <td style="width: 10%; text-align: right">
-                    <form action="{% url 'auth_ex:signin-category' category.id %}" method="post">
+                    <form action="{% url 'auth_ex:signin-category' category.category_id %}" method="post">
                       {% csrf_token %}
                       <input type="hidden" name="form_name" value="sign_up_category">
                       <button type='submit' class="btn btn-link btn-sm">

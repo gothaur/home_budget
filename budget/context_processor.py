@@ -10,7 +10,7 @@ from budget.forms import (
     FilterExpensesForm,
 )
 from budget.models import (
-    Category,
+    Expenses,
 )
 User = get_user_model()
 
@@ -37,9 +37,14 @@ def add_entry_form(request):
     try:
         user = User.objects.get(pk=request.user.id)
         user_active_categories = user.categories.order_by('name')
-        user_inactive_categories = Category.objects.exclude(
-            name__in=[category.name for category in user_active_categories]
-        )
+        user_inactive_categories = Expenses.objects.filter(
+            user=user
+        ).values(
+            'category_id',
+            'category__name',
+        ).distinct().exclude(
+            category__name__in=[category.name for category in user_active_categories]
+        ).order_by('category__name')
     except:
         pass
     context = {

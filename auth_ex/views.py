@@ -103,21 +103,14 @@ class SettingsView(LoginRequiredMixin, View):
             user = User.objects.get(pk=request.user.id)
             add_category_form = AddCategoryForm(request.POST)
             if add_category_form.is_valid():
-                print('form jest walidny')
                 try:
                     category = Category.objects.get(
                         name__iexact=add_category_form.cleaned_data['name']
                     )
-                    print('juz jest taka kategoria')
                 except Category.DoesNotExist:
                     category = Category.objects.create(
                         name=add_category_form.cleaned_data['name'],
                         default_category=False
-                    )
-                    messages.add_message(
-                        request,
-                        messages.SUCCESS,
-                        "pobrano kategorie z bazy"
                     )
                 user.categories.add(category)
                 messages.add_message(
