@@ -10,7 +10,7 @@ from django.urls import (
 class Category(models.Model):
     name = models.CharField(
         max_length=32,
-        unique=True,
+        # unique=True,
     )
     default_category = models.BooleanField()
 

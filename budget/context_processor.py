@@ -32,21 +32,21 @@ def sidebars(request):
 def add_entry_form(request):
     expense_form = AddExpenseForm()
     income_form = AddIncomeForm()
-    user_categories = []
-    all_categories = []
+    user_active_categories = []
+    user_inactive_categories = []
     try:
         user = User.objects.get(pk=request.user.id)
-        user_categories = user.categories.order_by('name')
-        all_categories = Category.objects.exclude(
-            name__in=[category.name for category in user_categories]
+        user_active_categories = user.categories.order_by('name')
+        user_inactive_categories = Category.objects.exclude(
+            name__in=[category.name for category in user_active_categories]
         )
     except:
         pass
     context = {
         'expense_form': expense_form,
         'income_form': income_form,
-        'all_categories': all_categories,
-        'user_categories': user_categories,
+        'all_categories': user_inactive_categories,
+        'user_categories': user_active_categories,
     }
     return context
 

@@ -107,7 +107,9 @@
               <td>
                 <input type="date" name="{{ income_form.date.name }}" value="{{ today }}" class="form-control mb-2 mr-sm-2" required id="id_{{ income_form.date.name }}">
               </td>
+              <th><label for="id_{{ income_form.amount.name }}">Kwota:</label></th>
               {{ income_form.amount }}
+              <th><label for="id_{{ income_form.comment.name }}">Komentarz:</label></th>
               {{ income_form.comment }}
               <button type="submit" class="btn btn-outline-secondary form-control mb-2">Dodaj</button>
             </form>

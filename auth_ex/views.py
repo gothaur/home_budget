@@ -9,7 +9,6 @@ from django.contrib.auth import (
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
 )
-from django.db.models import Sum
 from django.urls import (
     reverse_lazy,
 )
@@ -78,26 +77,54 @@ class SettingsView(LoginRequiredMixin, View):
 
         form_name = request.POST.get('form_name')
 
+        # if form_name == 'add_category':
+        #     if Category.objects.filter(name__iexact=request.POST.get('name')).exists():
+        #         messages.add_message(
+        #             request,
+        #             messages.WARNING,
+        #             "Taka kategoria już istnieje",
+        #         )
+        #     else:
+        #         user = User.objects.get(pk=request.user.id)
+        #         add_category_form = AddCategoryForm(request.POST)
+        #         if add_category_form.is_valid():
+        #             category = Category.objects.create(
+        #                 name=add_category_form.cleaned_data['name'],
+        #                 default_category=False)
+        #             user.categories.add(category)
+        #             messages.add_message(
+        #                 request,
+        #                 messages.SUCCESS,
+        #                 "Pomyślnie dodano nową kategorię",
+        #             )
+        #     return redirect('auth_ex:settings')
+
         if form_name == 'add_category':
-            if Category.objects.filter(name__iexact=request.POST.get('name')).exists():
-                messages.add_message(
-                    request,
-                    messages.WARNING,
-                    "Taka kategoria już istnieje",
-                )
-            else:
-                user = User.objects.get(pk=request.user.id)
-                add_category_form = AddCategoryForm(request.POST)
-                if add_category_form.is_valid():
+            user = User.objects.get(pk=request.user.id)
+            add_category_form = AddCategoryForm(request.POST)
+            if add_category_form.is_valid():
+                print('form jest walidny')
+                try:
+                    category = Category.objects.get(
+                        name__iexact=add_category_form.cleaned_data['name']
+                    )
+                    print('juz jest taka kategoria')
+                except Category.DoesNotExist:
                     category = Category.objects.create(
                         name=add_category_form.cleaned_data['name'],
-                        default_category=False)
-                    user.categories.add(category)
+                        default_category=False
+                    )
                     messages.add_message(
                         request,
                         messages.SUCCESS,
-                        "Pomyślnie dodano nową kategorię",
+                        "pobrano kategorie z bazy"
                     )
+                user.categories.add(category)
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    "Pomyślnie dodano kategorię"
+                )
             return redirect('auth_ex:settings')
 
         if form_name == 'edit_user':
