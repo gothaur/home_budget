@@ -178,7 +178,7 @@ class Index(View):
 
         )
         expense_income_chart.force_uri_protocol = 'https'
-        expense_income_chart.title = 'Miesięczne przychody [w PLN]'
+        expense_income_chart.title = 'Miesięczne przychody oraz wydatki [w PLN]'
         expense_income_chart.x_labels = dates
         expense_income_chart.add(
             'Przychody',

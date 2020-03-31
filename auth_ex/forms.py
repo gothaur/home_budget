@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import (
     get_user_model,
 )
@@ -8,6 +9,12 @@ from django.contrib.auth.forms import (
 from django import forms
 from budget.models import (
     Category,
+)
+from captcha.fields import (
+    ReCaptchaField,
+)
+from captcha.widgets import (
+    ReCaptchaV2Checkbox,
 )
 from home_budget.validators import (
     validate_file_extension,
@@ -69,9 +76,28 @@ class AddCategoryForm(forms.ModelForm):
 
 
 class CustomUserCreationForm(UserCreationForm):
+    # captcha = ReCaptchaField(
+    #     public_key=settings.GOOGLE_RECAPTCHA_SITE_KEY,
+    #     private_key=settings.GOOGLE_RECAPTCHA_SECRET_KEY,
+    #     widget=ReCaptchaV2Checkbox(
+    #         api_params={
+    #             'hl': 'pl',
+    #         }
+    #     ),
+    # )
+
     class Meta:
         model = get_user_model()
         fields = ['username', 'password1', 'password2']
+
+    # def clean_captcha(self):
+    #     captcha = self.cleaned_data.get("captcha")
+    #     print(captcha)
+    #     if not captcha['success']:
+    #         raise forms.ValidationError(
+    #             self.error_messages['Czy aby na pewno jesteś człowkiem?'],
+    #         )
+    #     return captcha
 
 
 class UploadFileForm(forms.Form):

@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'captcha',
     'rest_framework',
     'api.apps.ApiConfig',
     'auth_ex',
@@ -120,16 +121,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-MEDIA_URL = "/media/"
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 STATIC_URL = '/static/'
 
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
 AUTH_USER_MODEL = 'auth_ex.User'
 
 # Database
@@ -156,8 +155,20 @@ except ModuleNotFoundError:
     print("Uzupełnij dane i spróbuj ponownie!")
     exit(0)
 
+try:
+    from home_budget.local_settings import (
+        GOOGLE_RECAPTCHA_SECRET_KEY,
+        GOOGLE_RECAPTCHA_SITE_KEY,
+    )
+except ModuleNotFoundError:
+    print("Nie ustawiono klucza GOOGLE_RECAPTCHA_SECRET_KEY i/lub GOOGLE_RECAPTCHA_SITE_KEY w pliku local_settings.py!")
+    print("Uzupełnij dane i spróbuj ponownie!")
+    exit(0)
+
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER = 'apikey'
 EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']

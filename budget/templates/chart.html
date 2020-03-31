@@ -1,4 +1,7 @@
 {% extends '__base_view__.html' %}
+{% block title %}
+  zaplanuj-budzet
+{% endblock %}
 {% block body %}
   <div id="chart">
     <embed type="image/svg+xml" src= {{ total_balance_chart|safe }} />

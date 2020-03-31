@@ -1,10 +1,18 @@
 {% extends '__base_view__.html' %}
 {% block body %}
-  Jesteś pewien, że chcesz usunąć konto?
-  <form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Usuń">
-  </form>
-  <a href="{% url 'auth_ex:settings' %}">Powrót do ustawień</a>
+  <div class="card text-center mx-auto" style="max-width: 26rem; margin-top: 10%">
+    <div class="card-header text-center">
+      Czy jesteś pewien, że chcesz usunąć konto?
+    </div>
+    <div class="card-body">
+      <form class="form-group" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit" class="btn btn-danger form-control">Usuń</button>
+      </form>
+{#      <p><a href="{% url 'auth_ex:settings' %}">Powrót do ustawień</a></p>#}
+      <a href="{% url 'auth_ex:settings' %}"
+         class="btn btn-primary">Nie, zabierz mnie stąd</a>
+    </div>
+  </div>
 {% endblock %}

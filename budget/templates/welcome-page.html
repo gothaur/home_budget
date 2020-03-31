@@ -1,6 +1,79 @@
 {% extends '__base_view__.html' %}
+{% block title %}
+  zaplanuj-budzet
+{% endblock %}
 {% block body %}
-  Znajdujesz się na stronie aplikacji pomagającej śledzić Twój miesięczny przepływ gotówki. Jeśli nie masz jeszcze konta,
-  <a href="{% url 'auth_ex:register' %}">tutaj</a> możesz się zarejstrować. Jeśli masz już konto,
-  <a href="{% url 'auth_ex:login' %}">zaloguj się</a>
+  {% load static %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <div style="text-align: center" class="mb-3">
+        <h1 style="font-size: 4em"><strong>zaplanuj-budzet</strong></h1>
+        <small>Bądź na bieżąco ze swoimi wydatkami.</small><br><br>
+        <a href="{% url 'auth_ex:register' %}" class="btn btn-primary">Załóż darmowe konto</a>
+        <br>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="row no-gutters">
+      <div class="col-md-4">
+        <img src="{% static 'introduction/balance-chart.png' %}" class="card-img" alt="balane-hart">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">Wykres Twoich oszczędności</h5>
+          <p class="card-text">Możesz śledzić jak się kształtują Twoje oszczędności w czasie.<br>
+            Włączaj i wyłączaj wykresy według własnego uznania</p>
+          <p class="card-text"><small class="text-muted">Kliknij czerwony prostokąt aby wyłączyć wykres wydatków</small></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="row no-gutters">
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">Zestawienie wydatków oraz przychodów</h5>
+          <p class="card-text">Możesz w wygodny sposób obserwować wysokość swoich przychodów oraz wydatków w czasie</p>
+          <p class="card-text"><small class="text-muted">Wybierz, które dane chcesz widzieć</small></p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <img src="{% static 'introduction/incomes-expenses.png' %}" class="card-img" alt="incomes-and-expenses">
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="row no-gutters">
+      <div class="col-md-4">
+        <img src="{% static 'introduction/summary.png' %}" class="card-img" alt="summary">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">Podsumowanie</h5>
+          <p class="card-text">Dzięki tabli wydatków możesz zobaczyć ile pieniędzy poszło na poszczególne kategorie produktów</p>
+          <p class="card-text"><small class="text-muted">- Aż 5625,32 złotych na jedzenie?!</small></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="row no-gutters">
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">Zestawienie wydatków względem kategorii</h5>
+          <p class="card-text">W łatwy sposób oceń, które kategorie produktów najbardziej obciążają Twój budżet.</p>
+          <p class="card-text"><small class="text-muted">- Zdecydowanie za dużo pieniędzy wydajemy na jedzenie!</small></p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <img src="{% static 'introduction/categorized-expenses.png' %}" class="card-img" alt="categorized-expenses">
+      </div>
+    </div>
+  </div>
 {% endblock %}
