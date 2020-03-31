@@ -12,6 +12,7 @@
         <button type="submit" class="btn btn-primary form-control">Zaloguj się</button>
       </form>
       <p>Nie masz konta? Zarejstruj się <a href="{% url 'auth_ex:register' %}">tutaj</a></p>
+      <small><a href="{% url 'auth_ex:password-reset' %}">Nie pamiętasz hasła?</a></small>
     </div>
   </div>
 {% endblock %}
