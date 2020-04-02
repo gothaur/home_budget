@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
+from celery.schedules import crontab
 from django.urls import reverse_lazy
 
 import os
@@ -21,9 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -172,3 +173,21 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
+
+
+# CELERY_BROKER_URL = 'redis://h:p25bde47f0ecf0de18acd3bb60fa34eeecf29c741bc4266f791751693bbb2ee2d@ec2-52-202-177-173.compute-1.amazonaws.com:13899'
+# CELERY_BEAT_SCHEDULE = {
+#     'print-every-10-seconds': {
+#         'task': 'budget.tasks.print_message_to_console',
+#         'schedule': crontab(day_of_month=2),
+#     },
+# }
+CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_BEAT_SCHEDULE = {
+    '2nd-day-monthly-reports': {
+        'task': 'budget.tasks.email_monthly_report',
+        'schedule': 10.0,
+        'args': '',
+    },
+}
+# CELERY_TIMEZONE = 'Europe/Warsaw'

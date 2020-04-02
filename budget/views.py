@@ -49,6 +49,8 @@ from django.views.generic import (
     DetailView,
     UpdateView,
 )
+
+# from budget.tasks import print_message_to_console
 from home_budget.functions import (
     data_filter,
 )
@@ -305,6 +307,9 @@ class IncomeView(LoginRequiredMixin, View):
         date_from = request.GET.get("date_from", timezone.localdate())
         date_to = request.GET.get("date_to", timezone.localdate())
         incomes = data_filter(request, Income, date_from, date_to)
+
+        # print_message_to_console.delay()
+
         context = {
             'incomes': incomes,
             'date_from': date_from,
@@ -460,7 +465,7 @@ class GenerateReportView(LoginRequiredMixin, View):
         user = request.user
         date = datetime(
             timezone.now().year,
-            timezone.now().month,
+            timezone.now().month - 1,
             1
         )
 
