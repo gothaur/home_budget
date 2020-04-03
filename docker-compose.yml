@@ -1,0 +1,24 @@
+version: '3'
+volumes:
+  pgdata:
+services:
+  python:
+    build:
+      context: .
+      dockerfile: docker/dev/python/Dockerfile
+    volumes:
+      - ./home_budget:/home_budget
+    ports:
+    - 8000:8000
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+#    command: python manage.py runserver 0.0.0.0:8000
+  postgres:
+    image: postgres:12.2
+    ports:
+    - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: home_budget
+      POSTGRES_PASSWORD: coderslab
+    volumes:
+    - pgdata:/var/lib/postgresql/data
