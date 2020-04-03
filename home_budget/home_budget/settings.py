@@ -189,12 +189,19 @@ SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 #         'schedule': crontab(day_of_month=2),
 #     },
 # }
-CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_BROKER_URL = 'amqp://rabbitmq'
+# CELERY_BEAT_SCHEDULE = {
+#     '2nd-day-monthly-reports': {
+#         'task': 'budget.tasks.email_monthly_report',
+#         'schedule': 30.0,
+#         'args': '',
+#     },
+# }
+
 CELERY_BEAT_SCHEDULE = {
     '2nd-day-monthly-reports': {
         'task': 'budget.tasks.email_monthly_report',
-        'schedule': 10.0,
-        'args': '',
+        'schedule': crontab(day_of_month=4),
     },
 }
-# CELERY_TIMEZONE = 'Europe/Warsaw'
+CELERY_TIMEZONE = 'Europe/Warsaw'
