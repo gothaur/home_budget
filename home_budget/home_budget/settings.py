@@ -14,17 +14,21 @@ from django.urls import reverse_lazy
 
 import os
 
+from decouple import (
+    config,
+)
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = ''
+SECRET_KEY = config('SECRET_KEY')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = ['*']
 
@@ -142,61 +146,27 @@ AUTH_USER_MODEL = 'auth_ex.User'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-try:
-    from home_budget.local_settings import DATABASES
-except ModuleNotFoundError:
-    print("Brak konfiguracji bazy danych w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
-    exit(0)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
+    }
+}
 
-try:
-    from home_budget.local_settings import SECRET_KEY
-except ModuleNotFoundError:
-    print("Nie ustawiono klucza SECRET_KEY w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
-    exit(0)
-
-try:
-    from home_budget.local_settings import SENDGRID_API_KEY
-except ModuleNotFoundError:
-    print("Nie ustawiono klucza SENDGRID_API_KEY w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
-    exit(0)
-
-try:
-    from home_budget.local_settings import (
-        GOOGLE_RECAPTCHA_SECRET_KEY,
-        GOOGLE_RECAPTCHA_SITE_KEY,
-    )
-except ModuleNotFoundError:
-    print("Nie ustawiono klucza GOOGLE_RECAPTCHA_SECRET_KEY i/lub GOOGLE_RECAPTCHA_SITE_KEY w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
-    exit(0)
+GOOGLE_RECAPTCHA_SITE_KEY = config('GOOGLE_RECAPTCHA_SITE_KEY')
+GOOGLE_RECAPTCHA_SECRET_KEY = config('GOOGLE_RECAPTCHA_SECRET_KEY')
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+EMAIL_HOST_PASSWORD = config('SENDGRID_API_KEY')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
-
-
-# CELERY_BROKER_URL = 'redis://h:p25bde47f0ecf0de18acd3bb60fa34eeecf29c741bc4266f791751693bbb2ee2d@ec2-52-202-177-173.compute-1.amazonaws.com:13899'
-# CELERY_BEAT_SCHEDULE = {
-#     'print-every-10-seconds': {
-#         'task': 'budget.tasks.print_message_to_console',
-#         'schedule': crontab(day_of_month=2),
-#     },
-# }
 CELERY_BROKER_URL = 'amqp://rabbitmq'
-# CELERY_BEAT_SCHEDULE = {
-#     '2nd-day-monthly-reports': {
-#         'task': 'budget.tasks.email_monthly_report',
-#         'schedule': 30.0,
-#         'args': '',
-#     },
-# }
 
 CELERY_BEAT_SCHEDULE = {
     '2nd-day-monthly-reports': {
@@ -205,3 +175,6 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 CELERY_TIMEZONE = 'Europe/Warsaw'
+
+
+SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
