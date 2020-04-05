@@ -201,7 +201,7 @@ CELERY_BROKER_URL = 'amqp://rabbitmq'
 CELERY_BEAT_SCHEDULE = {
     '2nd-day-monthly-reports': {
         'task': 'budget.tasks.email_monthly_report',
-        'schedule': crontab(day_of_month=4),
+        'schedule': crontab(0, 0, day_of_month=4),
     },
 }
 CELERY_TIMEZONE = 'Europe/Warsaw'

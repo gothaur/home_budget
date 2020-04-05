@@ -472,6 +472,7 @@ class GenerateReportView(LoginRequiredMixin, View):
         categorized_expenses = Expenses.objects.filter(
             user=user,
             date__gte=date,
+            date__lt=datetime(timezone.now().year, timezone.now().month, 1),
         ).values(
             'category__name',
         ).order_by(
@@ -490,7 +491,8 @@ class GenerateReportView(LoginRequiredMixin, View):
         )['total']
         expenses = Expenses.objects.filter(
             user=user,
-            date__gte=date
+            date__gte=date,
+            date__lt=datetime(timezone.now().year, timezone.now().month, 1),
         ).aggregate(
             total=Coalesce(
                 Sum('amount'),

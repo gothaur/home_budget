@@ -95,7 +95,7 @@ W tym miesiącu do kasy domowej wpłynęło {actual_month_income} PLN
 Łączna suma wydatków wynosi {actual_month_expenses}, w tym:
 
 {result}
-Saldo na koniec miesiąca wynosi {actual_month_income or 0 - actual_month_expenses or 0} PLN;
+Saldo na koniec miesiąca wynosi {(actual_month_income or 0) - (actual_month_expenses or 0)} PLN;
 
 
 To jest wiadomość automatyczna, proszę na nią nie odpowiadać.
