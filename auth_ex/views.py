@@ -59,6 +59,7 @@ class SettingsView(LoginRequiredMixin, View):
         user_form = EditUserForm(initial={
             'username': user.username,
             'email': user.email,
+            'send_email': user.send_email,
         })
         add_category_form = AddCategoryForm()
         upload_file_form = UploadFileForm()
@@ -123,6 +124,7 @@ class SettingsView(LoginRequiredMixin, View):
             if user_form.is_valid():
                 user = User.objects.get(pk=request.user.id)
                 user.email = user_form.cleaned_data['email']
+                user.send_email = user_form.cleaned_data['send_email']
                 user.save()
                 messages.add_message(
                     request,

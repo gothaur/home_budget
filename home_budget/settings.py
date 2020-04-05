@@ -14,15 +14,20 @@ from django.urls import reverse_lazy
 
 import os
 
+from decouple import (
+    config,
+)
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = ['*']
 
@@ -132,43 +137,25 @@ STATICFILES_DIRS = [
 ]
 AUTH_USER_MODEL = 'auth_ex.User'
 
+# SECURE_SSL_REDIRECT = True
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-try:
-    from home_budget.local_settings import DATABASES
-except ModuleNotFoundError:
-    print("Brak konfiguracji bazy danych w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
-    exit(0)
-
-try:
-    from home_budget.local_settings import SECRET_KEY
-except ModuleNotFoundError:
-    print("Nie ustawiono klucza SECRET_KEY w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
-    exit(0)
-
-try:
-    from home_budget.local_settings import SENDGRID_API_KEY
-except ModuleNotFoundError:
-    print("Nie ustawiono klucza SENDGRID_API_KEY w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
-    exit(0)
-
-try:
-    from home_budget.local_settings import (
-        GOOGLE_RECAPTCHA_SECRET_KEY,
-        GOOGLE_RECAPTCHA_SITE_KEY,
-    )
-except ModuleNotFoundError:
-    print("Nie ustawiono klucza GOOGLE_RECAPTCHA_SECRET_KEY i/lub GOOGLE_RECAPTCHA_SITE_KEY w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
-    exit(0)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
+    }
+}
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+EMAIL_HOST_PASSWORD = config('SENDGRID_API_KEY')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -183,11 +170,11 @@ SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 #     },
 # }
 CELERY_BROKER_URL = 'amqp://localhost'
-CELERY_BEAT_SCHEDULE = {
-    '2nd-day-monthly-reports': {
-        'task': 'budget.tasks.email_monthly_report',
-        'schedule': 10.0,
-        'args': '',
-    },
-}
+# CELERY_BEAT_SCHEDULE = {
+#     '2nd-day-monthly-reports': {
+#         'task': 'budget.tasks.email_monthly_report',
+#         'schedule': 10.0,
+#         'args': '',
+#     },
+# }
 # CELERY_TIMEZONE = 'Europe/Warsaw'

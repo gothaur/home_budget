@@ -48,6 +48,23 @@ class EditUserForm(forms.Form):
         label='',
         required=False,
     )
+    send_email = forms.BooleanField(
+        required=False,
+        # label='Chcę otrzymywać miesięczy raport wydatków',
+    )
+
+    text = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'aria-label': 'Text input with checkbox',
+                'placeholder': 'Wysyłaj mi miesięczy raport wydatków',
+            }
+        ),
+        required=False,
+        disabled=True,
+        label='',
+    )
 
 
 class LoginForm(AuthenticationForm):

@@ -42,7 +42,7 @@
             </div>
             <input type="hidden" name="form_name" value="upload_file">
             <button type="submit" class="btn btn-primary form-control">
-{#              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>#}
+              {#              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>#}
               Wczytaj</button>
           </form>
         </div>
@@ -65,9 +65,63 @@
               {% endfor %}
             </ol>
           {% endif %}
+        {% if user_form.username.errors %}
+            <ol>
+              {% for err in user_form.username.errors %}
+                <li>
+                  <strong>
+                    {{ err|escape }}
+                  </strong>
+                </li>
+              {% endfor %}
+            </ol>
+          {% endif %}
+          {% if user_form.text.errors %}
+            <ol>
+              {% for err in user_form.text.errors %}
+                <li>
+                  <strong>
+                    {{ err|escape }}
+                  </strong>
+                </li>
+              {% endfor %}
+            </ol>
+          {% endif %}
+          {% if user_form.send_email.errors %}
+            <ol>
+              {% for err in user_form.send_email.errors %}
+                <li>
+                  <strong>
+                    {{ err|escape }}
+                  </strong>
+                </li>
+              {% endfor %}
+            </ol>
+          {% endif %}
+          {% if user_form.non_field_errors %}
+            <ol>
+              {% for err in user_form.non_field_errors %}
+                <li>
+                  <strong>
+                    {{ err|escape }}
+                  </strong>
+                </li>
+              {% endfor %}
+            </ol>
+          {% endif %}
           <form class="form-group" method="post">
             {% csrf_token %}
-            {{ user_form }}
+            {{ user_form.form_name }}
+            {{ user_form.username }}
+            {{ user_form.email }}
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <div class="input-group-text">
+                  {{ user_form.send_email }}
+                </div>
+              </div>
+              {{ user_form.text }}
+            </div>
             <button type="submit" class="btn btn-primary form-control">Edytuj</button>
           </form>
           <a class="btn btn-outline-danger" href="{% url 'auth_ex:delete-user' user.id%}">Usuń konto</a>

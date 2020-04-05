@@ -11,3 +11,4 @@ class User(AbstractUser):
     categories = models.ManyToManyField(
         Category,
     )
+    send_email = models.BooleanField(default=False)

@@ -463,67 +463,71 @@ class GenerateReportView(LoginRequiredMixin, View):
     def get(self, request):
 
         user = request.user
-        date = datetime(
-            timezone.now().year,
-            timezone.now().month - 1,
-            1
-        )
-
-        categorized_expenses = Expenses.objects.filter(
-            user=user,
-            date__gte=date,
-        ).values(
-            'category__name',
-        ).order_by(
-            'category__name',
-        ).annotate(
-            total_sum=Sum('amount')
-        )
-        income = Income.objects.filter(
-            user=user,
-            date__gte=date
-        ).aggregate(
-            total=Coalesce(
-                Sum('amount'),
-                Value(0),
-            )
-        )['total']
-        expenses = Expenses.objects.filter(
-            user=user,
-            date__gte=date
-        ).aggregate(
-            total=Coalesce(
-                Sum('amount'),
-                Value(0),
-            )
-        )['total']
-        result = monthly_report(
-            date.strftime('%Y-%m'),
-            income,
-            expenses,
-            categorized_expenses,
-        )
-        report = {
-            'to': user.email,
-            'subject': f"Raport z {date.strftime('%Y-%m')}",
-            'content': result,
-        }
-
         context = {
             'message': 'Błąd wysyłania raportu. Upewnij się, że został podany poprawny adres e-mail'
         }
-
-        if user.email:
-            send_mail(
-                report['subject'],
-                report['content'],
-                'raport@zaplanuj.budzet.pl',
-                [user.email],
-                fail_silently=False,
+        if user.send_email:
+            date = datetime(
+                timezone.now().year,
+                timezone.now().month - 1,
+                1
             )
-            context = {
-                'message': 'Raport wysłany',
+
+            categorized_expenses = Expenses.objects.filter(
+                user=user,
+                date__gte=date,
+            ).values(
+                'category__name',
+            ).order_by(
+                'category__name',
+            ).annotate(
+                total_sum=Sum('amount')
+            )
+            income = Income.objects.filter(
+                user=user,
+                date__gte=date
+            ).aggregate(
+                total=Coalesce(
+                    Sum('amount'),
+                    Value(0),
+                )
+            )['total']
+            expenses = Expenses.objects.filter(
+                user=user,
+                date__gte=date
+            ).aggregate(
+                total=Coalesce(
+                    Sum('amount'),
+                    Value(0),
+                )
+            )['total']
+            result = monthly_report(
+                date.strftime('%Y-%m'),
+                income,
+                expenses,
+                categorized_expenses,
+            )
+            report = {
+                'to': user.email,
+                'subject': f"Raport z {date.strftime('%Y-%m')}",
+                'content': result,
             }
+
+            # context = {
+            #     'message': 'Błąd wysyłania raportu. Upewnij się, że został podany poprawny adres e-mail'
+            # }
+
+            if user.email:
+                send_mail(
+                    report['subject'],
+                    report['content'],
+                    'raport@zaplanuj.budzet.pl',
+                    [user.email],
+                    fail_silently=False,
+                )
+                context = {
+                    'message': 'Raport wysłany',
+                }
 
         return render(request, 'send-report.html', context)
 
