@@ -48,6 +48,10 @@ class EditUserForm(forms.Form):
         label='',
         required=False,
     )
+    send_email = forms.BooleanField(
+        required=False,
+        label='Wysyłaj mi miesięczne raporty',
+    )
 
 
 class LoginForm(AuthenticationForm):

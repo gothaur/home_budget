@@ -59,6 +59,7 @@ class SettingsView(LoginRequiredMixin, View):
         user_form = EditUserForm(initial={
             'username': user.username,
             'email': user.email,
+            'send_email': user.send_email,
         })
         add_category_form = AddCategoryForm()
         upload_file_form = UploadFileForm()
@@ -74,28 +75,6 @@ class SettingsView(LoginRequiredMixin, View):
     def post(self, request):
 
         form_name = request.POST.get('form_name')
-
-        # if form_name == 'add_category':
-        #     if Category.objects.filter(name__iexact=request.POST.get('name')).exists():
-        #         messages.add_message(
-        #             request,
-        #             messages.WARNING,
-        #             "Taka kategoria już istnieje",
-        #         )
-        #     else:
-        #         user = User.objects.get(pk=request.user.id)
-        #         add_category_form = AddCategoryForm(request.POST)
-        #         if add_category_form.is_valid():
-        #             category = Category.objects.create(
-        #                 name=add_category_form.cleaned_data['name'],
-        #                 default_category=False)
-        #             user.categories.add(category)
-        #             messages.add_message(
-        #                 request,
-        #                 messages.SUCCESS,
-        #                 "Pomyślnie dodano nową kategorię",
-        #             )
-        #     return redirect('auth_ex:settings')
 
         if form_name == 'add_category':
             user = User.objects.get(pk=request.user.id)
