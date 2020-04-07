@@ -74,7 +74,7 @@ def date(request):
 
 def version(request):
     context = {
-        'version': '0.94 beta',
+        'version': '0.97 beta',
         'today': timezone.datetime.today().strftime('%Y-%m-%d'),
     }
     return context

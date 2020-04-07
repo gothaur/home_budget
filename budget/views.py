@@ -262,9 +262,26 @@ class Index(View):
 class ExpensesView(LoginRequiredMixin, View):
 
     def get(self, request):
-        date_from = request.GET.get("date_from", timezone.localdate())
-        date_to = request.GET.get("date_to", timezone.localdate())
-        selected_category = request.GET.get("category", "-1")
+        # date_from = request.GET.get("date_from", timezone.localdate())
+        # date_to = request.GET.get("date_to", timezone.localdate())
+        today = timezone.datetime.today()
+        request.session['first_day_of_month'] = request.GET.get(
+            "date_from",
+            timezone.datetime(
+                year=today.year,
+                month=today.month,
+                day=1,
+            ).strftime('%Y-%m-%d')
+        )
+        request.session['today'] = request.GET.get(
+            "date_to",
+            today.strftime('%Y-%m-%d')
+        )
+        request.session['category'] = request.GET.get("category", "-1")
+        # selected_category = request.GET.get("category", "-1")
+        date_from = request.session['first_day_of_month']
+        date_to = request.session['today']
+        selected_category = request.session['category']
         expenses = data_filter(request, Expenses, date_from, date_to, selected_category)
 
         user = User.objects.get(pk=request.user.id)
@@ -304,11 +321,33 @@ class ExpensesView(LoginRequiredMixin, View):
 class IncomeView(LoginRequiredMixin, View):
 
     def get(self, request):
-        date_from = request.GET.get("date_from", timezone.localdate())
-        date_to = request.GET.get("date_to", timezone.localdate())
+        today = timezone.datetime.today()
+        request.session['first_day_of_month'] = request.GET.get(
+            "date_from",
+            timezone.datetime(
+                year=today.year,
+                month=today.month,
+                day=1,
+            ).strftime('%Y-%m-%d')
+        )
+        request.session['today'] = request.GET.get(
+            "date_to",
+            today.strftime('%Y-%m-%d')
+        )
+        # date_from = request.GET.get("date_from", timezone.localdate())
+        # date_to = request.GET.get("date_to", timezone.localdate())
+
+        date_from = request.session['first_day_of_month']
+        date_to = request.session['today']
+
         incomes = data_filter(request, Income, date_from, date_to)
 
-        # print_message_to_console.delay()
+        # request.session['first_day_of_month'] = timezone.datetime(
+        #     year=timezone.datetime.today().year,
+        #     month=timezone.datetime.today().month,
+        #     day=1,
+        # ).strftime('%Y-%m-%d')
+        # request.session['today'] = timezone.datetime.today().strftime('%Y-%m-%d')
 
         context = {
             'incomes': incomes,
@@ -458,78 +497,78 @@ class IncomeDetailView(LoginRequiredMixin, DetailView):
     template_name = 'income-detail.html'
 
 
-class GenerateReportView(LoginRequiredMixin, View):
-
-    def get(self, request):
-
-        user = request.user
-        context = {
-            'message': 'Błąd wysyłania raportu. Upewnij się, że został podany poprawny adres e-mail'
-        }
-        if user.send_email:
-            date = datetime(
-                timezone.now().year,
-                timezone.now().month - 1,
-                1
-            )
-
-            categorized_expenses = Expenses.objects.filter(
-                user=user,
-                date__gte=date,
-            ).values(
-                'category__name',
-            ).order_by(
-                'category__name',
-            ).annotate(
-                total_sum=Sum('amount')
-            )
-            income = Income.objects.filter(
-                user=user,
-                date__gte=date
-            ).aggregate(
-                total=Coalesce(
-                    Sum('amount'),
-                    Value(0),
-                )
-            )['total']
-            expenses = Expenses.objects.filter(
-                user=user,
-                date__gte=date
-            ).aggregate(
-                total=Coalesce(
-                    Sum('amount'),
-                    Value(0),
-                )
-            )['total']
-            result = monthly_report(
-                date.strftime('%Y-%m'),
-                income,
-                expenses,
-                categorized_expenses,
-            )
-            report = {
-                'to': user.email,
-                'subject': f"Raport z {date.strftime('%Y-%m')}",
-                'content': result,
-            }
-
-            # context = {
-            #     'message': 'Błąd wysyłania raportu. Upewnij się, że został podany poprawny adres e-mail'
-            # }
-
-            if user.email:
-                send_mail(
-                    report['subject'],
-                    report['content'],
-                    'raport@zaplanuj.budzet.pl',
-                    [user.email],
-                    fail_silently=False,
-                )
-                context = {
-                    'message': 'Raport wysłany',
-                }
-
-        return render(request, 'send-report.html', context)
+# class GenerateReportView(LoginRequiredMixin, View):
+#
+#     def get(self, request):
+#
+#         user = request.user
+#         context = {
+#             'message': 'Błąd wysyłania raportu. Upewnij się, że został podany poprawny adres e-mail'
+#         }
+#         if user.send_email:
+#             date = datetime(
+#                 timezone.now().year,
+#                 timezone.now().month - 1,
+#                 1
+#             )
+#
+#             categorized_expenses = Expenses.objects.filter(
+#                 user=user,
+#                 date__gte=date,
+#             ).values(
+#                 'category__name',
+#             ).order_by(
+#                 'category__name',
+#             ).annotate(
+#                 total_sum=Sum('amount')
+#             )
+#             income = Income.objects.filter(
+#                 user=user,
+#                 date__gte=date
+#             ).aggregate(
+#                 total=Coalesce(
+#                     Sum('amount'),
+#                     Value(0),
+#                 )
+#             )['total']
+#             expenses = Expenses.objects.filter(
+#                 user=user,
+#                 date__gte=date
+#             ).aggregate(
+#                 total=Coalesce(
+#                     Sum('amount'),
+#                     Value(0),
+#                 )
+#             )['total']
+#             result = monthly_report(
+#                 date.strftime('%Y-%m'),
+#                 income,
+#                 expenses,
+#                 categorized_expenses,
+#             )
+#             report = {
+#                 'to': user.email,
+#                 'subject': f"Raport z {date.strftime('%Y-%m')}",
+#                 'content': result,
+#             }
+#
+#             # context = {
+#             #     'message': 'Błąd wysyłania raportu. Upewnij się, że został podany poprawny adres e-mail'
+#             # }
+#
+#             if user.email:
+#                 send_mail(
+#                     report['subject'],
+#                     report['content'],
+#                     'raport@zaplanuj.budzet.pl',
+#                     [user.email],
+#                     fail_silently=False,
+#                 )
+#                 context = {
+#                     'message': 'Raport wysłany',
+#                 }
+#
+#         return render(request, 'send-report.html', context)
 
 
 class ManualFileView(View):
