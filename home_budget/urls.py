@@ -35,4 +35,5 @@ urlpatterns = [
     # path('report/', views.GenerateReportView.as_view(), name='report'),
     path('documentation/', views.ManualFileView.as_view(), name='instructions'),
     path('users/', include('auth_ex.urls',  namespace='auth_ex'),),
+    path('shopping-list/', views.ShoppingList.as_view(), name="shopping-list"),
 ]

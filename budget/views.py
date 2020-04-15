@@ -497,6 +497,11 @@ class IncomeDetailView(LoginRequiredMixin, DetailView):
     template_name = 'income-detail.html'
 
 
+class ShoppingList(LoginRequiredMixin, View):
+
+    def get(self, request):
+        return render(request, "shopping-list.html")
+
 # class GenerateReportView(LoginRequiredMixin, View):
 #
 #     def get(self, request):
