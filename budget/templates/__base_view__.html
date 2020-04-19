@@ -46,6 +46,13 @@
           <a class="nav-link" href="{% url 'expenses' %}">Wydatki</a>
         {% endif %}
       </li>
+      <li class="nav-item">
+        {% if message == "shopping_list" %}
+          <a class="nav-link active" href="{% url 'shopping-list' %}">Lista zakupów</a>
+        {% else %}
+          <a class="nav-link" href="{% url 'shopping-list' %}">Lista zakupów</a>
+        {% endif %}
+      </li>
       {% if not user.is_authenticated %}
         <li class="nav-item">
           <a class="nav-link" href="{% url 'auth_ex:register' %}">Zarejestruj</a>

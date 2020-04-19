@@ -36,6 +36,19 @@ class Expenses(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 
+class ShoppingList(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    product = models.CharField(max_length=128)
+    completed = models.BooleanField(
+        default=False,
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return self.product
+
+
 # class Message(models.Model):
 #     subject = models.CharField(
 #         max_length=64,

@@ -24,6 +24,8 @@ def sidebars(request):
         message = "summary"
     elif request.path == '/users/edit/':
         message = "settings"
+    elif request.path == '/shopping-list/':
+        message = "shopping_list"
     else:
         message = None
     return {'message': message}

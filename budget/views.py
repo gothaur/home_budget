@@ -17,9 +17,6 @@ from django.contrib.auth import (
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
 )
-from django.core.mail import (
-    send_mail,
-)
 from django.db.models import (
     Sum,
     Value,
@@ -47,6 +44,7 @@ from django.views import (
 from django.views.generic import (
     DeleteView,
     DetailView,
+    ListView,
     UpdateView,
 )
 
@@ -57,13 +55,12 @@ from home_budget.functions import (
 from budget.forms import (
     AddExpenseForm,
     AddIncomeForm,
+    AddShoppingListForm,
 )
 from budget.models import (
     Expenses,
     Income,
-)
-from home_budget.functions import (
-    monthly_report,
+    ShoppingList,
 )
 from home_budget.settings import BASE_DIR
 
@@ -80,15 +77,15 @@ class Index(View):
 
         try:
             ex = Expenses.objects.filter(
-                    user=user,
-                ).order_by('date')[0].date
+                user=user,
+            ).order_by('date')[0].date
         except IndexError:
             ex = timezone.now().date()
 
         try:
             inc = Income.objects.filter(
-                    user=user,
-                ).order_by('date')[0].date
+                user=user,
+            ).order_by('date')[0].date
         except IndexError:
             inc = timezone.now().date()
 
@@ -497,10 +494,55 @@ class IncomeDetailView(LoginRequiredMixin, DetailView):
     template_name = 'income-detail.html'
 
 
-class ShoppingList(LoginRequiredMixin, View):
+class ShoppingListView(LoginRequiredMixin, ListView):
+    # def get(self, request):
+    #     form = AddShoppingListForm()
+    #     shopping_list = ShoppingList.objects.filter(user=request.user)
+    #
+    #     context = {
+    #         "form": form,
+    #         "shopping_list": shopping_list
+    #     }
+    #
+    #     return render(request, "shopping-list.html", context)
 
-    def get(self, request):
-        return render(request, "shopping-list.html")
+    context_object_name = 'shopping_list'
+    # ordering = 'product'
+    template_name = 'shopping-list.html'
+
+    def get_queryset(self):
+        return ShoppingList.objects.filter(
+            user=self.request.user,
+        ).order_by('product')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = AddShoppingListForm()
+        return context
+
+    def post(self, request):
+        form = AddShoppingListForm(request.POST)
+        form_name = request.POST.get('form_name')
+        if form_name == "add_product":
+            if form.is_valid():
+                ShoppingList.objects.create(
+                    user=request.user,
+                    completed=False,
+                    product=form.cleaned_data['product'],
+                )
+        if form_name == "done_shopping":
+            ShoppingList.objects.all().delete()
+
+        if form_name == "purchased":
+            product = ShoppingList.objects.filter(
+                user=request.user
+            ).get(
+                pk=int(request.POST.get('pk')),
+            )
+            product.completed = True if product.completed is False else False
+            product.save()
+        return redirect('shopping-list')
+
 
 # class GenerateReportView(LoginRequiredMixin, View):
 #

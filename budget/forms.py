@@ -3,6 +3,7 @@ from django.utils import timezone
 from budget.models import (
     Category,
     Income,
+    ShoppingList,
 )
 
 
@@ -121,3 +122,23 @@ class FilterExpensesForm(forms.Form):
         label='Kategoria',
         required=False,
     )
+
+
+class AddShoppingListForm(forms.ModelForm):
+
+    product = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Dodaj produkt',
+            },
+        ),
+        label="Produkt",
+    )
+    completed = forms.BooleanField(
+        required=False
+    )
+
+    class Meta:
+        model = ShoppingList
+        fields = ['completed', 'product']
