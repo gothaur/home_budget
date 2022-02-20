@@ -28,7 +28,7 @@ def print_message_to_console():
         'subject',
         'content',
         'raport@zaplanuj.budzet.pl',
-        ['bartynski.michal@gmail.com'],
+        ['test@example.com'],
         fail_silently=False,
     )
 
